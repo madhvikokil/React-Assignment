@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Grid, Header, Segment } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
-// import { Form, Radio } from 'semantic-ui-react';
 import { connect } from 'react-redux';
+import { authLogin } from './../store/action/authAction';
 
 class Login extends React.Component {
   constructor(props){
@@ -21,11 +21,12 @@ class Login extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
+    this.props.authLogin(this.state);
     console.log("state: ", this.state);
   }
 
   render() {
-    console.log(this.props);
+    console.log("props: ",this.props.authError);
     return (
       <React.Fragment>
         {/* <h1 style={{color:"teal"}}>BOOK STORE</h1> */}
@@ -55,22 +56,30 @@ class Login extends React.Component {
                 </button>
               </div>
 
-              <div class="ui error message"></div>
+              <div class="ui error message">
+                <p>{this.props.authError}</p>
+              </div>
             </form>
           <div class="ui message">
             New to us? <Link to="/signup">Sign Up</Link>
           </div>
         </Grid.Column>
         </Grid>
+
+        {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authError}</p>}
       </React.Fragment>
     )
   }
 }
-
+const mapDispatchToProps =(dispatch) => {
+  return {
+    authLogin: (auth)  => dispatch(authLogin(auth))
+  }
+}
 const mapStateToProps = (state) => {
   return {
-    auth: state
+    authError: state.auth.authError
   }
 }
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

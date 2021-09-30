@@ -4,11 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { createStore } from 'redux';
-import authReducer from './store/reducers/authReducer';
+import { createStore, applyMiddleware, compose } from 'redux';
+import reducer from './store/reducers/index';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { reduxFirestore, getFirestore } from 'redux-firestore';
+import { reactReduxFirebase, getFirebase } from 'react-redux-firebase';
+import fbConfig from './fbConfig';
 
-const store = createStore(authReducer);
+const store = createStore(reducer,
+  compose(
+    applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
+    reactReduxFirebase(fbConfig), // redux binding for firebase
+    reduxFirestore(fbConfig) // redux bindings for firestore
+  )
+);
 
 ReactDOM.render(
   <Provider store={store}>
