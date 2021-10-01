@@ -22,11 +22,9 @@ class Login extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.authLogin(this.state);
-    console.log("state: ", this.state);
   }
 
   render() {
-    console.log("props: ",this.props.authError);
     return (
       <React.Fragment>
         {/* <h1 style={{color:"teal"}}>BOOK STORE</h1> */}
@@ -76,6 +74,7 @@ const mapDispatchToProps =(dispatch) => {
     authLogin: (auth)  => dispatch(authLogin(auth))
   }
 }
+
 const mapStateToProps = (state) => {
   return {
     authError: state.auth.authError

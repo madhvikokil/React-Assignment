@@ -1,7 +1,9 @@
 import React from 'react';
 import { Button, Grid, Header, Segment, Form, Radio } from "semantic-ui-react";
+import { authSignup } from '../store/action/authAction';
+import { connect } from 'react-redux';
 
-export class Signup extends React.Component {
+class Signup extends React.Component {
   constructor(props){
     super(props);
     this.state={
@@ -14,13 +16,25 @@ export class Signup extends React.Component {
   }
 
   handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
+      this.setState({
+        [e.target.name]: e.target.value
+      })
+    }
+
+  handleRadio = (type) => {
+    if(type == 'customer')  {
+      this.setState({
+        typeOfUser: 'seller'
+      })
+    } else {
+      this.setState({
+        typeOfUser: 'customer'
+      })
+    }
   }
 
   handleSubmit = () => {
-    console.log("state: ", this.state);
+    this.props.authSignup(this.state);
   }
 
   render() {
@@ -64,14 +78,14 @@ export class Signup extends React.Component {
                 name='typeOfUser'
                 value='customer'
                 checked={this.state.typeOfUser === 'customer'}
-                onChange={this.handleChange}
+                onChange={() => this.handleRadio('seller')}
               />
               <Radio
                 label='Seller'
                 name='typeOfUser'
                 value='seller'
                 checked={this.state.typeOfUser === 'seller'}
-                onChange={this.handleChange}
+                onChange={() => this.handleRadio('customer')}
               />
             </div>
             <button
@@ -87,7 +101,22 @@ export class Signup extends React.Component {
       </Form>
       </Grid.Column>
       </Grid>
+      {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authError}</p>}
+
       </>
     )
   }
 }
+
+const mapDispatchToProps =(dispatch) => {
+  return {
+    authSignup: (auth)  => dispatch(authSignup(auth))
+  }
+}
+
+const mapStateToProps = (state) => {
+  return {
+    authError: state.auth.authError
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);
