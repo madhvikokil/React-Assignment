@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { logout } from './../../store/action/authAction';
-class CustomerDashboard extends React.Component {
+
+class SellerDashboard extends React.Component {
 
     logout = () => {
         this.props.logout();
@@ -12,7 +13,7 @@ class CustomerDashboard extends React.Component {
         return(
             <>
             <a href="/" onClick={this.logout}>Logout</a>
-            <h1>Dashboard of Customer</h1>
+            <h1>Dashboard of Seller</h1>
             </>
         )
     }
@@ -30,4 +31,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CustomerDashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(SellerDashboard);

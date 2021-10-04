@@ -1,5 +1,4 @@
-import { Redirect } from 'react-router'
-
+import { Redirect } from 'react-router';
 export const authLogin = (auth) => {
     return(dispatch, getState, { getFirebase, getFirestore }) => {
         // async code
@@ -12,16 +11,6 @@ export const authLogin = (auth) => {
             return firestore.collection('users').doc(res.user.uid).get().then((res) => {
                 localStorage.setItem('typeOfUser', res.data().userType);
                 dispatch({ type: "LOGIN_SUCCESS", auth });
-                // Redirect to user specific dashboard on the basis of the type
-                // if(res.data().userType === 'admin') {
-                //     console.log("if");
-                //     <Redirect to="/admin-dashboard"/>
-                    
-                // } else {
-                //     console.log("else");
-
-                //     <Redirect to="/customer-dashboard"/>
-                // }
             })
         }).catch((err => {
             dispatch({ type: "LOGIN_ERROR", err});
@@ -47,6 +36,16 @@ export const authSignup = (auth) => {
             })
         }).catch((err) => {
             dispatch({ type: "SIGNUP_ERROR", err })
+        })
+    }
+}
+
+export const logout = () => {
+    return (dispatch, getState, {getFirebase}) => {
+        const firebase = getFirebase();
+        firebase.auth().signOut().then(() => {
+            localStorage.removeItem("typeOfUser");
+            dispatch({ type: "LOGOUT_SUCCESS" })  
         })
     }
 }

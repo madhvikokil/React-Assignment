@@ -1,9 +1,10 @@
 import React from 'react';
-import { Button, Grid, Header, Segment } from "semantic-ui-react";
+import { Button, Grid, Header } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import FormElements from "../Hoc/formElement";
+import { withRouter } from "react-router-dom";
 import { authLogin } from './../store/action/authAction';
-
 class Login extends React.Component {
   constructor(props){
     super(props);
@@ -22,12 +23,12 @@ class Login extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.authLogin(this.state);
+    this.props.history.push("/dashboard");
   }
 
   render() {
     return (
       <React.Fragment>
-        {/* <h1 style={{color:"teal"}}>BOOK STORE</h1> */}
         <Grid textAlign="center" style={{ height: "75vh" }} verticalAlign="middle">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h1" color="teal" textAlign="center">
@@ -36,22 +37,17 @@ class Login extends React.Component {
             <form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
-                  <div class="ui left icon input">
-                    <i class="user icon"></i>
-                    <input type="text" name="email" placeholder="E-mail address" onChange={this.handleChange}/>
-                  </div>
+                    {this.props.formInput({
+                       placeholder: 'E-mail address', type: "text", name: "email", onChange: this.handleChange, value:this.state.email, icon: 'user'})}                
                 </div>
                 <div class="field">
-                  <div class="ui left icon input">
-                    <i class="lock icon"></i>
-                    <input type="password" name="password" placeholder="Password" onChange={this.handleChange}/>
-                  </div>
+                    {this.props.formInput({
+                       placeholder: 'Password', type: "password", name: "password", onChange: this.handleChange, value:this.state.password, icon: 'lock'})}                
                 </div>
-                <button 
-                  class="ui fluid large teal submit button"
-                  disabled={this.state.email === '' || this.state.password == ''}>
-                    Login
-                </button>
+                <Button
+                  color='twitter'
+                  disabled={this.state.email === '' || this.state.password === ''} >Log In
+                </Button>
               </div>
 
               <div class="ui error message">
@@ -77,8 +73,9 @@ const mapDispatchToProps =(dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    authError: state.auth.authError
+    authError: state.auth.authError,
+    auth: state.firebase.auth
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default FormElements(withRouter(connect(mapStateToProps, mapDispatchToProps)(Login)));

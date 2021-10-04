@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Grid, Header, Segment, Form, Radio } from "semantic-ui-react";
+import { Button, Grid, Header, Form } from "semantic-ui-react";
 import { authSignup } from '../store/action/authAction';
 import { connect } from 'react-redux';
-
+import FormElements from "../Hoc/formElement";
+import { withRouter } from "react-router-dom";
 class Signup extends React.Component {
   constructor(props){
     super(props);
@@ -22,7 +23,7 @@ class Signup extends React.Component {
     }
 
   handleRadio = (type) => {
-    if(type == 'customer')  {
+    if(type === 'customer')  {
       this.setState({
         typeOfUser: 'seller'
       })
@@ -35,12 +36,12 @@ class Signup extends React.Component {
 
   handleSubmit = () => {
     this.props.authSignup(this.state);
+    this.props.history.push("/login");
   }
 
   render() {
     return (
-      <>
-      {/* <h1 style={{color:"teal"}}>BOOK STORE</h1> */}
+      <React.Fragment>
       <Grid textAlign="center" style={{ height: "75vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h1" color="teal" textAlign="center">
@@ -49,50 +50,31 @@ class Signup extends React.Component {
         <Form class="ui large form" onSubmit={this.handleSubmit}>
           <div class="ui stacked segment">
             <div class="field">
-              <div class="ui left icon input">
-                <i class="user icon"></i>
-                <input type="text" name="firstName" placeholder="First Name" onChange={this.handleChange}/>
-              </div>
+                {this.props.formInput({
+                       placeholder: 'First Name', type: "text", name: "firstName", onChange: this.handleChange, value:this.state.firstName, icon: 'user'})}
             </div>
             <div class="field">
-              <div class="ui left icon input">
-                <i class="user icon"></i>
-                <input type="text" name="lastName" placeholder="Last Name" onChange={this.handleChange}/>
-              </div>
+                {this.props.formInput({
+                       placeholder: 'Last Name', type: "text", name: "lastName", onChange: this.handleChange, value:this.state.lastName, icon: 'user'})}                
             </div>
             <div class="field">
-              <div class="ui left icon input">
-                <i class="user icon"></i>
-                <input type="text" name="email" placeholder="E-mail Address" onChange={this.handleChange}/>
-              </div>
+                {this.props.formInput({
+                       placeholder: 'E-mail address', type: "text", name: "email", onChange: this.handleChange, value:this.state.email, icon: 'user'})}                
             </div>
             <div class="field">
-              <div class="ui left icon input">
-                <i class="lock icon"></i>
-                <input type="password" name="password" placeholder="Password" onChange={this.handleChange}/>
-              </div>
+                {this.props.formInput({
+                       placeholder: 'Password', type: "password", name: "password", onChange: this.handleChange, value:this.state.password, icon: 'user' })}                
             </div>
             <div class="field">
-              <Radio
-                label='Customer'
-                name='typeOfUser'
-                value='customer'
-                checked={this.state.typeOfUser === 'customer'}
-                onChange={() => this.handleRadio('seller')}
-              />
-              <Radio
-                label='Seller'
-                name='typeOfUser'
-                value='seller'
-                checked={this.state.typeOfUser === 'seller'}
-                onChange={() => this.handleRadio('customer')}
-              />
+            {this.props.radioInput({
+                label: 'Customer', name: "typeOfUser", onChange:() => this.handleRadio('seller'), value: 'customer', checked: this.state.typeOfUser === 'customer'})}        
+            {this.props.radioInput({
+                label: 'Seller', name: "typeOfUser", onChange:() => this.handleRadio('customer'), value: 'seller', checked: this.state.typeOfUser === 'seller'})}     
             </div>
-            <button
-              class="ui fluid large teal submit button"
-              disabled={this.state.firstName === '' || this.state.lastName == '' || this.state.email === '' || this.state.password == ''}>
-                Sign Up
-            </button>
+            <Button
+              color='twitter'
+              disabled={this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.password === ''}>Sign Up
+            </Button>
           </div>
 
           <div class="ui error message">
@@ -102,8 +84,7 @@ class Signup extends React.Component {
       </Grid.Column>
       </Grid>
       {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authError}</p>}
-
-      </>
+      </React.Fragment>
     )
   }
 }
@@ -116,7 +97,8 @@ const mapDispatchToProps =(dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    authError: state.auth.authError
+    authError: state.auth.authError,
+    auth: state.firebase.auth
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Signup);
+export default FormElements(withRouter(connect(mapStateToProps, mapDispatchToProps)(Signup)));

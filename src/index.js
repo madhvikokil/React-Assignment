@@ -15,23 +15,25 @@ import fbConfig from './fbConfig';
 const store = createStore(reducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
-    reactReduxFirebase(fbConfig), // redux binding for firebase
+    reactReduxFirebase(fbConfig, {attachAuthIsReady: true }), // redux binding for firebase
     reduxFirestore(fbConfig) // redux bindings for firestore
   )
 );
 
-ReactDOM.render(
-  <Provider store={store}>
-  <BrowserRouter>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </BrowserRouter>
-  </Provider>,
-  document.getElementById('root')
-);
+store.firebaseAuthIsReady.then(() => {
+  ReactDOM.render(
+    <Provider store={store}>
+    <BrowserRouter>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </BrowserRouter>
+    </Provider>,
+    document.getElementById('root')
+  );
+reportWebVitals();
+})
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
