@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid, Header } from "semantic-ui-react";
+import { Button, Grid, Header, Segment } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import FormElements from "../Hoc/formElement";
@@ -11,6 +11,7 @@ class Login extends React.Component {
     this.state={
         email:"",
         password:"",
+        errorMessages: []
     }
   }
 
@@ -21,9 +22,26 @@ class Login extends React.Component {
   }
 
   handleSubmit = (e) => {
+    let errorMessages = [];
     e.preventDefault();
-    this.props.authLogin(this.state);
-    this.props.history.push("/dashboard");
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    // const passwordRegex = "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$";
+
+    let emailRegexCheck = emailRegex.test(String(this.state.email));
+    if(!emailRegexCheck) errorMessages.push("Invalid email address");
+
+    let passwordRegexTest = this.state.password.length > 6;
+    if(!passwordRegexTest) errorMessages.push("Password should be min 6 characters" );
+    
+    if(errorMessages !== []) {
+      this.setState({
+        errorMessages: errorMessages
+      })
+    }
+    if(emailRegexCheck && passwordRegexTest) {
+      this.props.authLogin(this.state);
+      this.props.history.push("/dashboard");
+    }
   }
 
   render() {
@@ -34,15 +52,17 @@ class Login extends React.Component {
           <Header as="h1" color="teal" textAlign="center">
             Log-in to your Account
           </Header>
+          {this.state.errorMessages.length !== 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages}</Segment> : null}
             <form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
                     {this.props.formInput({
-                       placeholder: 'E-mail address', type: "text", name: "email", onChange: this.handleChange, value:this.state.email, icon: 'user'})}                
+                       placeholder: 'E-mail address', type: "text", name: "email", onChange: this.handleChange, value:this.state.email, icon: 'user', error: this.state.emailError })}                
                 </div>
+
                 <div class="field">
                     {this.props.formInput({
-                       placeholder: 'Password', type: "password", name: "password", onChange: this.handleChange, value:this.state.password, icon: 'lock'})}                
+                       placeholder: 'Password', type: "password", name: "password", onChange: this.handleChange, value:this.state.password, icon: 'lock', error: this.state.passwordError })}                
                 </div>
                 <Button
                   color='twitter'

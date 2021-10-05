@@ -37,7 +37,7 @@ const authReducer = (state = initState, action) => {
 
         return {
             ...state,
-            authError: "Logged out"
+            authError: null
         }
 
         default:

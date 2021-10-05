@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router';
 export const authLogin = (auth) => {
     return(dispatch, getState, { getFirebase, getFirestore }) => {
         // async code
