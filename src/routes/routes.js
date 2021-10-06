@@ -36,6 +36,15 @@ export const routes = [
         roles: ['admin', 'seller', 'customer']
     },
     {
+        name: "order",
+        path: "/order",
+        componentPath: "order",
+        component: "Order",
+        authRoute: true,
+        isExact: false,
+        roles: []
+    },
+    {
         name: "userList",
         path: "/dashboard/users",
         componentPath: "userList",
@@ -50,8 +59,17 @@ export const routes = [
         componentPath: "bookList",
         component: "BookList",
         authRoute: true,
-        isExact: false,
+        isExact: true,
         roles: ['admin', 'seller' ]
+    },
+    {
+        name: "addBook",
+        path: "/dashboard/books/:id",
+        componentPath: "addBook",
+        component: "AddBook",
+        authRoute: true,
+        isExact: false,
+        roles: ['admin', 'seller', 'customer']
     },
     {
         name: "my-orders",
@@ -63,12 +81,12 @@ export const routes = [
         roles: ['admin', 'seller', 'customer']
     },
     {
-        name: "order",
-        path: "/order",
-        componentPath: "order",
-        component: "Order",
+        name: "addBook",
+        path: "/dashboard/create",
+        componentPath: "addBook",
+        component: "AddBook",
         authRoute: true,
         isExact: false,
-        roles: []
-    }, 
+        roles: ['admin', 'seller', 'customer']
+    },
 ]

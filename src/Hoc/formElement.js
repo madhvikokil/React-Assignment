@@ -33,7 +33,7 @@ const radioInput =(props) => {
 
 const formData ={
     formInput : formInput,
-    radioInput: radioInput   
+    radioInput: radioInput
 }
 
 export default (HocComponent) => {

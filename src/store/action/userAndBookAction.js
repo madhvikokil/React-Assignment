@@ -1,7 +1,6 @@
+import { v4 as uuidv4 } from 'uuid';
 export const getUsersList = () => {
     return(dispatch, getState, { getFirebase, getFirestore }) => {
-        // async code
-        const firebase = getFirebase();
         const firestore = getFirestore();
         firestore.collection('users').get().then((res) => {
             let data = [];
@@ -17,17 +16,115 @@ export const getUsersList = () => {
 
 export const getBookList = () => {
     return(dispatch, getState, { getFirebase, getFirestore }) => {
-        // async code
-        const firebase = getFirebase();
         const firestore = getFirestore();
-        firestore.collection('books').get().then((res) => {
-            let data = [];
-            res.forEach((doc) => {
-                data.push(doc.data());
-              });
-            dispatch({ type: "GET_BOOKS_LIST", data })
-        }).catch((err => {
-                dispatch({ type: "GET_BOOKS_LIST", err});
+        let userType = localStorage.getItem("typeOfUser");
+        if(userType === 'seller') {
+            firestore.collection('books').where('addedBy', '==' , 'seller').get().then((res) => {
+                let data = [];
+                res.forEach((doc) => {
+                    data.push(doc.data());
+                  });
+                dispatch({ type: "GET_BOOKS_LIST", data })
+            }).catch((err => {
+              dispatch({ type: "GET_BOOKS_LIST", err});
+          }))
+        } else {
+            firestore.collection('books').get().then((res) => {
+                let data = [];
+                res.forEach((doc) => {
+                    data.push(doc.data());
+                  });
+                dispatch({ type: "GET_BOOKS_LIST", data })
+            }).catch((err => {
+                    dispatch({ type: "GET_BOOKS_LIST", err});
+            }))
+        }
+    }
+}
+
+export const getPublishedBookList = () => {
+    return(dispatch, getState, { getFirestore }) => {
+        const firestore = getFirestore();
+            firestore.collection('books').where('status', '==' , 'PUBLISHED').get().then((res) => {
+                let data = [];
+                res.forEach((doc) => {
+                    data.push(doc.data());
+                  });
+                dispatch({ type: "GET_PUBLISHED_BOOKS_LIST", data })
+            }).catch((err => {
+              dispatch({ type: "GET_PUBLISHED_BOOKS_LIST", err});
             }))
     }
+}
+
+export const addBook = (bookDetails) => {
+    return(dispatch, getSelection, { getFirestore }) => {
+        const firestore = getFirestore();
+        let id = uuidv4();
+        firestore.collection('books').doc(id).set({
+          id: id,
+          author: bookDetails.author,
+          title: bookDetails.title,
+          description: bookDetails.description,
+          status: bookDetails.status,
+          price: bookDetails.price,
+          discount: bookDetails.discount,
+          addedBy: bookDetails.addedBy
+      }).then(() => {
+            dispatch({ type: 'ADD_BOOK_SUCCESS' });
+          }).catch(err => {
+            dispatch({ type: 'ADD_BOOK_FAILURE' , err});
+          });
+    }
+}
+
+export const fetchBookDetails = (id) => {
+    return(dispatch, getSelection, { getFirestore }) => {
+    const firestore = getFirestore();
+      
+    firestore.collection('books').doc(id).get().then((res) => {
+      let details = res.data();
+      dispatch({ type: "GET_BOOK_DETAIL", details });
+  }).catch(err => {
+    dispatch({ type: 'GET_BOOK_DETAIL' , err});
+  })
+}
+}
+
+export const placeOrder = (book) => {
+    return(dispatch, getstate, { getFirestore }) => {
+      const firestore = getFirestore();
+      // const uid = getState().firebase.auth.uid;
+      const uid = localStorage.getItem('uid');
+      firestore.collection('orders').add({
+        orderId: uuidv4(),
+        bookId: book.id,
+        finalPrice: book.price,
+        orderDate: new Date(),
+        status: "PENDING",
+        userId: uid,
+        titleOfBook: book.title
+
+      }).then((res) => {
+        dispatch({ type: 'ORDER_PLACED' })
+      }).catch(err => {
+      dispatch({ type: 'ORDER_PLACED_ERROR' , err});
+    })
+  }
+}
+
+export const getMyOrders = () => {
+    return(dispatch, getstate, { getFirestore }) => {
+      const firestore = getFirestore();
+      const uid = localStorage.getItem('uid');
+      firestore.collection('orders').where('userId', '==' , `${uid}`).get().then((res) => {
+        let data = [];
+        res.forEach((doc) => {
+            data.push(doc.data());
+          });
+        dispatch({ type: "MY_ORDERS", data })
+    }).catch(err => {
+      dispatch({ type: "MY_ORDERS_ERROR", err});
+    })
+  }
 }

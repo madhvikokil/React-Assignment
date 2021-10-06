@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableCell } from "semantic-ui-react";
+import { Table } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { getUsersList } from '../store/action/userAndBookAction';
 class UserList extends React.Component {
@@ -12,7 +12,7 @@ class UserList extends React.Component {
         return(
             <React.Fragment>
                 <h1>Users List</h1>
-                <Table singleLine>
+                {this.props.userList && this.props.userList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
                     <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Email</Table.HeaderCell>
@@ -32,7 +32,7 @@ class UserList extends React.Component {
                         </Table.Row>
                         ))}
                     </Table.Body>
-                </Table>
+                </Table> : <h3>No Data Found</h3>}
             </React.Fragment>
         )
     }

@@ -7,6 +7,7 @@ export const authLogin = (auth) => {
             auth.email,
             auth.password
         ).then((res) => {
+            localStorage.setItem('uid', res.user.uid);
             return firestore.collection('users').doc(res.user.uid).get().then((res) => {
                 localStorage.setItem('typeOfUser', res.data().userType);
                 dispatch({ type: "LOGIN_SUCCESS", auth });
