@@ -1,6 +1,7 @@
 const initState = {
-    authError: null,
-    isAuthenticated:  null,
+    authError: false,
+    authErrorDescription: null,
+    isAuthenticated:  false,
 }
 const authReducer = (state = initState, action) => {
     // manipulate state
@@ -8,15 +9,16 @@ const authReducer = (state = initState, action) => {
         case 'LOGIN_SUCCESS': 
         return {
             ...state,
-            authError: 'Login Success!!! Redirecting to Dashboard Page...',
-            isAuthenticated: true
+            isAuthenticated: true,
+            authError: false,
         } 
 
         case 'LOGIN_ERROR':
 
         return {
             ...state,
-            authError: action.err.message
+            authError: true,
+            authErrorDescription: action.err.message
         }
 
         case 'SIGNUP_SUCCESS':

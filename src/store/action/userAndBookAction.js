@@ -77,6 +77,38 @@ export const addBook = (bookDetails) => {
           });
     }
 }
+export const updateBook = (bookDetails) => {
+  return(dispatch, getSelection, { getFirestore }) => {
+      const firestore = getFirestore();
+      // let id = uuidv4();
+      firestore.collection('books').doc(bookDetails.id).update({
+        id: bookDetails.id,
+        author: bookDetails.author,
+        title: bookDetails.title,
+        description: bookDetails.description,
+        status: bookDetails.status,
+        price: bookDetails.price,
+        discount: bookDetails.discount,
+        addedBy: bookDetails.addedBy
+    }).then(() => {
+          dispatch({ type: 'UPDATE_BOOK_SUCCESS' });
+        }).catch(err => {
+          dispatch({ type: 'UPDATE_BOOK_FAILURE' , err});
+        });
+  }
+}
+
+export const deleteBook = (bookDetails) => {
+  return(dispatch, getSelection, { getFirestore }) => {
+      const firestore = getFirestore();
+      // let id = uuidv4();
+      firestore.collection('books').doc(bookDetails).delete().then(() => {
+          dispatch({ type: 'DELETE_BOOK_SUCCESS' });
+        }).catch(err => {
+          dispatch({ type: 'DELETE_BOOK_FAILURE' , err});
+        });
+  }
+}
 
 export const fetchBookDetails = (id) => {
     return(dispatch, getSelection, { getFirestore }) => {

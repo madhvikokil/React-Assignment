@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addBook, fetchBookDetails } from '../store/action/userAndBookAction';
+import { addBook, fetchBookDetails, updateBook } from '../store/action/userAndBookAction';
 import FormElements from "../Hoc/formElement";
+import { Dimmer, Loader } from "semantic-ui-react";
 import { withRouter } from "react-router-dom";
 
-import { Form, Button, Input, TextArea, Modal } from "semantic-ui-react";
+import { Form, Input, TextArea } from "semantic-ui-react";
 class AddBook extends React.Component {
     constructor(props){
         super(props);
@@ -24,32 +25,55 @@ class AddBook extends React.Component {
         this.setState({ [e.target.name]: e.target.value })
     }
 
-    submitBook = (e) => {
-        e.preventDefault();
+    submitBook = (type) => {
         let user = localStorage.getItem('typeOfUser');
         this.setState({ addedBy: user });
-        if(this.state.addedBy !== '') this.props.addBook(this.state);
+        if(this.state.addedBy !== '') {
+          if(type === 'add') {
+            this.props.addBook(this.state);
+          } else {
+            this.props.updateBook(this.state);
+          }
     }
+  }
 
     componentDidMount() {
-      this.props.fetchBookDetails(this.props.match.params.id);
-      console.log("eeeeeeeeeee");
-      if(this.props.bookDetails) {
-        console.log("here");
-        console.log("this.props.bookDetails: ", this.props);
-        this.setState({ title: this.props.bookDetails.title});
+      if(this.props.match.params.id) {
+        this.props.fetchBookDetails(this.props.match.params.id);
+      if(this.props.bookDetail) {
+      const updateTitle = this.state.title !== "" ? this.state.title : this.props.bookDetail.title;
+      const updateDescription = this.state.description !== "" ? this.state.description : this.props.bookDetail.description;
+      const updateAuthor = this.state.author !== "" ? this.state.author : this.props.bookDetail.author;
+      const updateStatus = this.state.status !== "" ? this.state.status : this.props.bookDetail.status;
+      const updatePrice = this.state.price !== "" ? this.state.price : this.props.bookDetail.price;
+      const updateId = this.state.id !== "" ? this.state.id : this.props.bookDetail.id;
+
+      this.setState({ title: updateTitle, description: updateDescription, status: updateStatus, author: updateAuthor, price: updatePrice, id: updateId });
       }
     }
+    }
+    
 
     render(){
         const dropdown = [
             { key: 'pend', value: 'PENDING', text: 'Pending' },
             { key: 'publish', value: 'PUBLISHED', text: 'Published' },
           ]
+        
+          if(this.props.match.params.id && !this.props.bookDetail) {
+            return (
+            <Dimmer active>
+                <Loader size='medium'>Loading</Loader>
+              </Dimmer>
+            )
+        }
+
+        const isEdit = localStorage.getItem('isEdit');
+        const { title, description, author, status, price  } = this.state;
 
         return(
         <React.Fragment>
-            <h1>Add Book</h1>
+            {this.props.match.params.id ? (isEdit === 'view' ? <h1> Book </h1>: <h1>Edit Book </h1>) : <h1>Add Book</h1>}
             <Form style={{ margin: "0 auto", width: '80%' }}>
                <Form.Field
                   id='form-input-control-first-name'
@@ -58,7 +82,8 @@ class AddBook extends React.Component {
                   placeholder='Title'
                   name='title'
                   onChange={this.handleChange}
-                  // value={this.state.title || this.props.bookDetail.title}
+                  value={title}
+                  readOnly={isEdit === 'view' ? true : false}
                   required
                 />
               <Form.Field
@@ -68,8 +93,9 @@ class AddBook extends React.Component {
                 placeholder='Author'
                 name='author'
                 onChange={this.handleChange}
-                // value={this.props.bookDetail.author}
+                value={author}
                 required
+                readOnly={isEdit === 'view' ? true : false}
                />
               <Form.Field
                 id='form-textarea-control-opinion'
@@ -78,8 +104,9 @@ class AddBook extends React.Component {
                 placeholder='Description'
                 name='description'
                 onChange={this.handleChange}
-                // value={this.props.bookDetail.description}
+                value={description}
                 required
+                readOnly={isEdit === 'view' ? true : false}
                 />
               <Form.Group widths='equal'>
                 <Form.Select
@@ -89,8 +116,9 @@ class AddBook extends React.Component {
                   name="status"
                   placeholder='Status'
                   onChange={this.handleSelect}
-                  // value={this.props.bookDetail.status}
+                  value={status}
                   required
+                  readOnly={isEdit === 'view' ? true : false}
                 />   
                 <Form.Field
                   id='form-input-control-first-name'
@@ -99,15 +127,16 @@ class AddBook extends React.Component {
                   placeholder='Price'
                   name='price'
                   onChange={this.handleChange}
-                  // value={this.props.bookDetail.price}
+                  value={price}
                   required
+                  readOnly={isEdit === 'view' ? true : false}
                 />
               </Form.Group>
-              <Form.Button
+              {(!this.props.match.params.id || (this.props.match.params.id && isEdit) !== 'view') && <Form.Button
                 // type='submit'
                 // disabled={ this.state.id === '' || this.state.author === '' || this.state.description === '' || this.state.price === '' || this.state.status === '' || this.state.title === '' }
-                onClick={this.submitBook}
-                >Add Book</Form.Button>
+                onClick={this.props.match.params.id && isEdit === 'edit' ?  () => this.submitBook('edit'): () => this.submitBook('add')}
+                >{this.props.match.params.id && isEdit === 'edit' ? 'Edit Book' : 'Add Book'}</Form.Button>}
             </Form>
         </React.Fragment>
         )
@@ -117,7 +146,8 @@ class AddBook extends React.Component {
 const mapDispatchToProps =(dispatch) => {
     return {
         addBook: (bookDetails)  => dispatch(addBook(bookDetails)),
-        fetchBookDetails: (id) => dispatch(fetchBookDetails(id))
+        fetchBookDetails: (id) => dispatch(fetchBookDetails(id)),
+        updateBook: (bookDetail) => dispatch(updateBook(bookDetail))
     }
 }
 

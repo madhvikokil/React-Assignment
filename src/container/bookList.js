@@ -2,21 +2,31 @@ import React from 'react';
 import { Table, Button } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
-import { getBookList } from '../store/action/userAndBookAction';
+import { getBookList, deleteBook } from '../store/action/userAndBookAction';
 class BookList extends React.Component {
     componentDidMount() {
         this.props.getBookList();
     }
 
-    addBook = () => {
+    addBook = (add) => {
+        localStorage.setItem('isEdit', add);
         this.props.history.push('create');
+    }
+
+    handleEvent = (id, isEdit) => {
+        if(isEdit === 'delete') {
+            this.props.deleteBook(id);
+        } else {
+            localStorage.setItem('isEdit', isEdit);
+            this.props.history.push(`books/${id}`);
+        }
     }
 
     render(){
     return(
         <React.Fragment>
             <h1>Book List</h1>
-            <Button position='right' secondary onClick={this.addBook}>Add Book</Button>
+            <Button position='right' secondary onClick={() => this.addBook('add')}>Add Book</Button>
             {this.props.bookList && this.props.bookList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
                 <Table.Header>
                 <Table.Row>
@@ -38,9 +48,9 @@ class BookList extends React.Component {
                         <Table.Cell>{book.price}</Table.Cell>
                         <Table.Cell>{book.status}</Table.Cell>
                         <Table.Cell>
-                            <Button icon="eye"></Button>
-                            <Button icon="delete"></Button> 
-                            <Button icon="edit" onClick={() => this.props.history.push(`books/${book.id}`)}></Button> 
+                            <Button icon="eye" onClick={() => this.handleEvent(book.id, 'view')}></Button>
+                            <Button icon="delete" onClick={() => this.handleEvent(book.id, 'delete')}></Button> 
+                            <Button icon="edit" onClick={() => this.handleEvent(book.id, 'edit')}></Button> 
                         </Table.Cell>
                     </Table.Row>
                     ))}
@@ -59,7 +69,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps =(dispatch) => {
     return {
-      getBookList: ()  => dispatch(getBookList())
+      getBookList: ()  => dispatch(getBookList()),
+      deleteBook: (id) => dispatch(deleteBook(id))
     }
   }
   

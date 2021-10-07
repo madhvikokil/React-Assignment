@@ -45,6 +45,8 @@ export const logout = () => {
         const firebase = getFirebase();
         firebase.auth().signOut().then(() => {
             localStorage.removeItem("typeOfUser");
+            localStorage.removeItem("uid");
+            localStorage.removeItem("isEdit");
             dispatch({ type: "LOGOUT_SUCCESS" })  
         })
     }

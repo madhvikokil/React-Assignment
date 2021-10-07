@@ -36,7 +36,10 @@ class Signup extends React.Component {
 
   handleSubmit = () => {
     this.props.authSignup(this.state);
-    this.props.history.push("/login");
+    if(this.props.auth.uid) {
+      this.props.history.push("dashboard");
+
+    }
   }
 
   render() {

@@ -4,7 +4,9 @@ const initState = {
     publishedBookList: null,
     bookStatus: null,
     bookDetail: null,
-    orderPlaced: null
+    orderPlaced: null,
+    isUpdated: false,
+    isDeleted: false
 }
 const bookReducer = (state = initState, action) => {
     // manipulate state
@@ -38,6 +40,30 @@ const bookReducer = (state = initState, action) => {
                 ...state,
                 bookStatus: null
             }
+
+        case 'UPDATE_BOOK_SUCCESS':
+            return {
+                ...state,
+                isUpdated: true
+            }
+            
+        case 'UPDATE_BOOK_FAILURE':
+            return {
+                ...state,
+                isUpdated: false
+            }
+                
+        case 'DELETE_BOOK_SUCCESS':
+            return {
+                ...state,
+                isDeleted: true
+            }
+                
+        case 'DELETE_BOOK_FAILURE':
+            return {
+                ...state,
+                isDeleted: false
+            }
         
         case 'GET_BOOK_DETAIL':
             return {
@@ -46,7 +72,6 @@ const bookReducer = (state = initState, action) => {
             }
         
         case 'ORDER_PLACED':
-            console.log("Order placed");
             return{
                 ...state,
                 orderPlaced: 'Success'
@@ -59,7 +84,6 @@ const bookReducer = (state = initState, action) => {
             }
         
         case 'MY_ORDERS':
-            console.log("data: ", action);
         return{
             ...state,
             myOrders: action.data

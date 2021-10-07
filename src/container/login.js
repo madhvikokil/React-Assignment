@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import FormElements from "../Hoc/formElement";
 import { withRouter } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { authLogin } from './../store/action/authAction';
 class Login extends React.Component {
   constructor(props){
@@ -40,7 +41,14 @@ class Login extends React.Component {
     }
     if(emailRegexCheck && passwordRegexTest) {
       this.props.authLogin(this.state);
-      this.props.history.push("/dashboard");
+      }
+    
+    if(this.props.auth.uid) {
+      console.log("uid: ", this.props.auth.uid);
+      return(
+        <Redirect to = "/dashboard" />
+        // this.props.history.push('dashboard');
+      )
     }
   }
 
@@ -70,9 +78,9 @@ class Login extends React.Component {
                 </Button>
               </div>
 
-              <div class="ui error message">
+              {/* <div class="ui error message">
                 <p>{this.props.authError}</p>
-              </div>
+              </div> */}
             </form>
           <div class="ui message">
             New to us? <Link to="/signup">Sign Up</Link>
@@ -80,7 +88,7 @@ class Login extends React.Component {
         </Grid.Column>
         </Grid>
 
-        {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authError}</p>}
+        {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authErrorDescription}</p>}
       </React.Fragment>
     )
   }
@@ -94,7 +102,9 @@ const mapDispatchToProps =(dispatch) => {
 const mapStateToProps = (state) => {
   return {
     authError: state.auth.authError,
-    auth: state.firebase.auth
+    auth: state.firebase.auth,
+    authErrorDescription: state.auth.authErrorDescription,
+    isAuthenticated: state.auth.isAuthenticated
   }
 }
 

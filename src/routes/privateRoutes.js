@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from "react-router-dom";
-import { Redirect } from 'react-router';
+import { Redirect } from "react-router-dom";
 import { Route } from 'react-router-dom';
 
 function ProtectedRoutes({ component: Component, ...route }) {
@@ -13,10 +13,12 @@ function ProtectedRoutes({ component: Component, ...route }) {
                     if(route.roles.includes(typeOfUser)) {
                     return <Component /> 
                     } else {
-                        <Redirect to="/404" />
+                        return(
+                            <Redirect to = "/dashboard" />
+                        )
                     }
                 } else {
-                    <Redirect to="/" />
+                    props.history.push("/");
                 }
             }}
         />
