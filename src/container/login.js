@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import FormElements from "../Hoc/formElement";
 import { withRouter } from "react-router-dom";
-import { Redirect } from "react-router-dom";
 import { authLogin } from './../store/action/authAction';
 class Login extends React.Component {
   constructor(props){
@@ -42,17 +41,13 @@ class Login extends React.Component {
     if(emailRegexCheck && passwordRegexTest) {
       this.props.authLogin(this.state);
       }
-    
-    if(this.props.auth.uid) {
-      console.log("uid: ", this.props.auth.uid);
-      return(
-        <Redirect to = "/dashboard" />
-        // this.props.history.push('dashboard');
-      )
-    }
   }
 
   render() {
+    const userType = localStorage.getItem('typeOfUser');
+    if(this.props.auth.uid && userType) {
+      this.props.history.push('dashboard');
+    }
     return (
       <React.Fragment>
         <Grid textAlign="center" style={{ height: "75vh" }} verticalAlign="middle">
@@ -104,7 +99,7 @@ const mapStateToProps = (state) => {
     authError: state.auth.authError,
     auth: state.firebase.auth,
     authErrorDescription: state.auth.authErrorDescription,
-    isAuthenticated: state.auth.isAuthenticated
+    // isAuthenticated: state.auth.isAuthenticated
   }
 }
 

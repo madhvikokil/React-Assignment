@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table } from "semantic-ui-react";
 import { connect } from 'react-redux';
+import { withRouter } from "react-router";
 import { getUsersList } from '../store/action/userAndBookAction';
 class UserList extends React.Component {
 
@@ -24,7 +25,7 @@ class UserList extends React.Component {
 
                     <Table.Body>
                         {this.props.userList && this.props.userList.map(user => (
-                        <Table.Row key={user.email}>
+                        <Table.Row pointer key={user.email} onClick={() => this.props.history.push(`/order/${user.uid}`)}>
                             <Table.Cell>{user.email}</Table.Cell>
                             <Table.Cell>{user.firstName}</Table.Cell>
                             <Table.Cell>{user.lastName}</Table.Cell>
@@ -50,4 +51,4 @@ const mapDispatchToProps =(dispatch) => {
     }
   }
   
-export default connect(mapStateToProps, mapDispatchToProps)(UserList);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserList));

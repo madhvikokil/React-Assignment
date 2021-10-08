@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { addBook, fetchBookDetails, updateBook } from '../store/action/userAndBookAction';
 import FormElements from "../Hoc/formElement";
-import { Dimmer, Loader } from "semantic-ui-react";
+import { Dimmer, Loader, Modal, Button } from "semantic-ui-react";
 import { withRouter } from "react-router-dom";
-
 import { Form, Input, TextArea } from "semantic-ui-react";
 class AddBook extends React.Component {
     constructor(props){
@@ -18,6 +17,7 @@ class AddBook extends React.Component {
             price: "",
             status: "",
             title: "",
+            isOpen: false
         }
     }
 
@@ -25,15 +25,35 @@ class AddBook extends React.Component {
         this.setState({ [e.target.name]: e.target.value })
     }
 
+    handleSelect = () => {
+      console.log("event: ", );
+      if(this.state.status === 'PENDING') {
+        this.setState({ status: 'PUBLISHED' });
+      } else {
+        this.setState({ status: 'PENDING' });
+      }
+    }
+
     submitBook = (type) => {
         let user = localStorage.getItem('typeOfUser');
         this.setState({ addedBy: user });
         if(this.state.addedBy !== '') {
           if(type === 'add') {
+            console.log("this.state: ", this.state);
             this.props.addBook(this.state);
           } else {
             this.props.updateBook(this.state);
           }
+          if(this.props.isUpdated || this.props.bookStatus) {
+            this.setState({ isOpen : false });
+            this.props.history.goBack();
+          }
+    }
+  }
+
+  checkNumericNew = (event) => {
+    if (!((event.key >= '0' && event.key <= '9') || event.key === 'Delete' || event.key === 'Backspace' || event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
+      event.preventDefault();
     }
   }
 
@@ -106,6 +126,7 @@ class AddBook extends React.Component {
                 onChange={this.handleChange}
                 value={description}
                 required
+                // error={description === ''}
                 readOnly={isEdit === 'view' ? true : false}
                 />
               <Form.Group widths='equal'>
@@ -115,10 +136,11 @@ class AddBook extends React.Component {
                   options={dropdown}
                   name="status"
                   placeholder='Status'
-                  onChange={this.handleSelect}
                   value={status}
+                  id="status"
+                  onChange={this.handleSelect}
                   required
-                  readOnly={isEdit === 'view' ? true : false}
+                  disabled={isEdit === 'view' ? true : false}
                 />   
                 <Form.Field
                   id='form-input-control-first-name'
@@ -129,13 +151,34 @@ class AddBook extends React.Component {
                   onChange={this.handleChange}
                   value={price}
                   required
+                  onKeyDown={this.checkNumericNew}
                   readOnly={isEdit === 'view' ? true : false}
                 />
+                {this.state.isOpen && 
+          <Modal
+            size={'tiny'}
+            open={this.state.isOpen}
+          >
+            <Modal.Header>{isEdit === 'add' ? 'Add a book' : 'Edit a book'}</Modal.Header>
+              <Modal.Content>
+                <p>Are you sure you want add/update the book?</p>
+              </Modal.Content>
+                <Modal.Actions>
+                  <Button negative onClick={() => this.setState({ isOpen: false })}>
+                    No, Cancel
+                  </Button>
+                  <Button positive onClick={isEdit === 'add' ? () => this.submitBook('add') : () => this.submitBook('edit')}>
+                    Yes
+                  </Button>
+                </Modal.Actions>
+            </Modal>
+        }
               </Form.Group>
               {(!this.props.match.params.id || (this.props.match.params.id && isEdit) !== 'view') && <Form.Button
                 // type='submit'
-                // disabled={ this.state.id === '' || this.state.author === '' || this.state.description === '' || this.state.price === '' || this.state.status === '' || this.state.title === '' }
-                onClick={this.props.match.params.id && isEdit === 'edit' ?  () => this.submitBook('edit'): () => this.submitBook('add')}
+                color='twitter'
+                disabled={ this.state.author === '' || this.state.description === '' || this.state.price === '' || this.state.status === '' || this.state.title === '' }
+                onClick={() => this.setState({ isOpen : true })}
                 >{this.props.match.params.id && isEdit === 'edit' ? 'Edit Book' : 'Add Book'}</Form.Button>}
             </Form>
         </React.Fragment>
@@ -154,6 +197,7 @@ const mapDispatchToProps =(dispatch) => {
 const mapStateToProps = (state) => {
     return {
       bookStatus: state.book.bookStatus,
+      isUpdated: state.book.isUpdated,
       bookDetail: state.book.bookDetail
     }
   }

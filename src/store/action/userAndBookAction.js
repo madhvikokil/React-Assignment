@@ -80,7 +80,6 @@ export const addBook = (bookDetails) => {
 export const updateBook = (bookDetails) => {
   return(dispatch, getSelection, { getFirestore }) => {
       const firestore = getFirestore();
-      // let id = uuidv4();
       firestore.collection('books').doc(bookDetails.id).update({
         id: bookDetails.id,
         author: bookDetails.author,
@@ -101,7 +100,6 @@ export const updateBook = (bookDetails) => {
 export const deleteBook = (bookDetails) => {
   return(dispatch, getSelection, { getFirestore }) => {
       const firestore = getFirestore();
-      // let id = uuidv4();
       firestore.collection('books').doc(bookDetails).delete().then(() => {
           dispatch({ type: 'DELETE_BOOK_SUCCESS' });
         }).catch(err => {
@@ -116,6 +114,7 @@ export const fetchBookDetails = (id) => {
       
     firestore.collection('books').doc(id).get().then((res) => {
       let details = res.data();
+      console.log("details: ", details);
       dispatch({ type: "GET_BOOK_DETAIL", details });
   }).catch(err => {
     dispatch({ type: 'GET_BOOK_DETAIL' , err});
@@ -126,10 +125,10 @@ export const fetchBookDetails = (id) => {
 export const placeOrder = (book) => {
     return(dispatch, getstate, { getFirestore }) => {
       const firestore = getFirestore();
-      // const uid = getState().firebase.auth.uid;
       const uid = localStorage.getItem('uid');
-      firestore.collection('orders').add({
-        orderId: uuidv4(),
+      let id = uuidv4();
+      firestore.collection('orders').doc(id).set({
+        orderId: id,
         bookId: book.id,
         finalPrice: book.price,
         orderDate: new Date(),
@@ -145,10 +144,23 @@ export const placeOrder = (book) => {
   }
 }
 
-export const getMyOrders = () => {
+export const updateOrderByAdmin = (book) => {
+  return(dispatch, getstate, { getFirestore }) => {
+    const firestore = getFirestore();
+    firestore.collection('orders').doc(book.orderId).update({
+      ...book,
+      status: "COMPLETED",
+    }).then((res) => {
+      dispatch({ type: 'ORDER_PLACED' })
+    }).catch(err => {
+    dispatch({ type: 'ORDER_PLACED_ERROR' , err});
+  })
+}
+}
+
+export const getMyOrders = (uid) => {
     return(dispatch, getstate, { getFirestore }) => {
       const firestore = getFirestore();
-      const uid = localStorage.getItem('uid');
       firestore.collection('orders').where('userId', '==' , `${uid}`).get().then((res) => {
         let data = [];
         res.forEach((doc) => {

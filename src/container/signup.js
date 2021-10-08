@@ -43,6 +43,10 @@ class Signup extends React.Component {
   }
 
   render() {
+    const userType = localStorage.getItem('typeOfUser');
+    if(this.props.auth.uid && userType) {
+      this.props.history.push('dashboard');
+    }
     return (
       <React.Fragment>
       <Grid textAlign="center" style={{ height: "75vh" }} verticalAlign="middle">

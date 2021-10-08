@@ -67,7 +67,7 @@ function App(props) {
 
 const mapStateToProps = (state) => {
   return {
-    isAuthenticated: state.auth.isAuthenticated,
+    // isAuthenticated: state.auth.isAuthenticated,
     auth: state.firebase.auth
   }
 }

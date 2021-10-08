@@ -1,7 +1,7 @@
 const initState = {
     authError: false,
     authErrorDescription: null,
-    isAuthenticated:  false,
+    // isAuthenticated:  false,
 }
 const authReducer = (state = initState, action) => {
     // manipulate state
@@ -9,8 +9,9 @@ const authReducer = (state = initState, action) => {
         case 'LOGIN_SUCCESS': 
         return {
             ...state,
-            isAuthenticated: true,
+            // isAuthenticated: true,
             authError: false,
+            authErrorDescription: 'Login Successfully!!!'
         } 
 
         case 'LOGIN_ERROR':
@@ -25,7 +26,7 @@ const authReducer = (state = initState, action) => {
 
         return {
             ...state,
-            authError: 'Signup Success'
+            authError: 'Signup Success,login to continue...'
         }
 
         case 'SIGNUP_ERROR':

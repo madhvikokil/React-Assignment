@@ -2,7 +2,7 @@ const initState = {
     userList: null,
     bookList: null,
     publishedBookList: null,
-    bookStatus: null,
+    bookStatus: false,
     bookDetail: null,
     orderPlaced: null,
     isUpdated: false,
@@ -66,6 +66,7 @@ const bookReducer = (state = initState, action) => {
             }
         
         case 'GET_BOOK_DETAIL':
+            console.log("bookDetail: ", action.details);
             return {
                 ...state,
                 bookDetail: action.details

@@ -30,7 +30,8 @@ export const authSignup = (auth) => {
                 firstName: auth.firstName,
                 lastName: auth.lastName,
                 email: auth.email,
-                userType: auth.typeOfUser
+                userType: auth.typeOfUser,
+                uid: res.user.uid
             }).then(() => {
                 dispatch({ type: "SIGNUP_SUCCESS", auth });
             })

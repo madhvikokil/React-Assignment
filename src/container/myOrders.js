@@ -5,7 +5,8 @@ import { getMyOrders } from '../store/action/userAndBookAction';
 class MyOrders extends React.Component {
 
     componentDidMount() {
-        this.props.getMyOrders();
+      const uid = localStorage.getItem('uid');
+      this.props.getMyOrders(uid);
     }
 
     render(){
@@ -17,8 +18,8 @@ class MyOrders extends React.Component {
                     <Table.Row>
                         <Table.HeaderCell>Book Title</Table.HeaderCell>
                         <Table.HeaderCell>Price</Table.HeaderCell>
+                        {/* <Table.HeaderCell>Order Date</Table.HeaderCell> */}
                         <Table.HeaderCell>Status</Table.HeaderCell>
-                        {/* <Table.HeaderCell>User Type</Table.HeaderCell> */}
                     </Table.Row>
                     </Table.Header>
 
@@ -27,12 +28,12 @@ class MyOrders extends React.Component {
                         <Table.Row key={order.orderId}>
                             <Table.Cell>{order.titleOfBook}</Table.Cell>
                             <Table.Cell>{order.finalPrice}</Table.Cell>
+                            {/* <Table.Cell>{order.orderDate}</Table.Cell> */}
                             <Table.Cell>{order.status}</Table.Cell>
-                            {/* <Table.Cell>{order.userType.toUpperCase()}</Table.Cell> */}
                         </Table.Row>
                         ))}
                     </Table.Body>
-                </Table> : <h3>No Data Found</h3>}
+                </Table> : <h3>No Order(s) placed</h3>}
             </React.Fragment>
         )
     }
@@ -46,7 +47,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps =(dispatch) => {
     return {
-      getMyOrders: ()  => dispatch(getMyOrders())
+      getMyOrders: (uid)  => dispatch(getMyOrders(uid))
     }
   }
   
