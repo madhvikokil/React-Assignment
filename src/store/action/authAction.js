@@ -32,8 +32,8 @@ export const authSignup = (auth) => {
                 email: auth.email,
                 userType: auth.typeOfUser,
                 uid: res.user.uid
-            }).then(() => {
-                dispatch({ type: "SIGNUP_SUCCESS", auth });
+            }).then((res) => {
+                dispatch({ type: "SIGNUP_SUCCESS", res });
             })
         }).catch((err) => {
             dispatch({ type: "SIGNUP_ERROR", err })

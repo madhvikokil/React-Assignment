@@ -55,7 +55,7 @@ class Login extends React.Component {
           <Header as="h1" color="teal" textAlign="center">
             Log-in to your Account
           </Header>
-          {this.state.errorMessages.length !== 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages}</Segment> : null}
+          {this.state.errorMessages.length !== 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages.map(error => <p>{error}</p>)}</Segment> : null}
             <form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">

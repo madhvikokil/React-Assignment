@@ -39,7 +39,6 @@ class AddBook extends React.Component {
         this.setState({ addedBy: user });
         if(this.state.addedBy !== '') {
           if(type === 'add') {
-            console.log("this.state: ", this.state);
             this.props.addBook(this.state);
           } else {
             this.props.updateBook(this.state);
@@ -56,6 +55,20 @@ class AddBook extends React.Component {
       event.preventDefault();
     }
   }
+
+  static getDerivedStateFromProps(props, currentState) {
+  if (currentState.id && currentState.id && currentState.id !== props.bookDetail.id) {
+    return {
+      title: props.bookDetail.title,
+      author:props.bookDetail.author,
+      status:props.bookDetail.status,
+      description:props.bookDetail.description,
+      discount:props.bookDetail.discount,
+      price:props.bookDetail.discount
+    }
+  }
+  return null
+}
 
     componentDidMount() {
       if(this.props.match.params.id) {
@@ -80,11 +93,11 @@ class AddBook extends React.Component {
             { key: 'publish', value: 'PUBLISHED', text: 'Published' },
           ]
         
-          if(this.props.match.params.id && !this.props.bookDetail) {
+          if(!this.props.bookDetail && this.props.match.params.id) {
             return (
             <Dimmer active>
                 <Loader size='medium'>Loading</Loader>
-              </Dimmer>
+            </Dimmer>
             )
         }
 
@@ -95,40 +108,13 @@ class AddBook extends React.Component {
         <React.Fragment>
             {this.props.match.params.id ? (isEdit === 'view' ? <h1> Book </h1>: <h1>Edit Book </h1>) : <h1>Add Book</h1>}
             <Form style={{ margin: "0 auto", width: '80%' }}>
-               <Form.Field
-                  id='form-input-control-first-name'
-                  control={Input}
-                  label='Title'
-                  placeholder='Title'
-                  name='title'
-                  onChange={this.handleChange}
-                  value={title}
-                  readOnly={isEdit === 'view' ? true : false}
-                  required
-                />
-              <Form.Field
-                id='form-input-control-last-name'
-                control={Input}
-                label='Author'
-                placeholder='Author'
-                name='author'
-                onChange={this.handleChange}
-                value={author}
-                required
-                readOnly={isEdit === 'view' ? true : false}
-               />
-              <Form.Field
-                id='form-textarea-control-opinion'
-                control={TextArea}
-                label='Description'
-                placeholder='Description'
-                name='description'
-                onChange={this.handleChange}
-                value={description}
-                required
-                // error={description === ''}
-                readOnly={isEdit === 'view' ? true : false}
-                />
+              {this.props.formFieldElement({
+                    id: 'form-input-control-first-name', label: 'Title', placeholder: 'Title', name: 'title',onChange: this.handleChange, value: title, readOnly: isEdit === 'view' ? true : false, required: true })}                
+              {this.props.formFieldElement({
+                    id: 'form-input-control-last-name', label: 'Author', placeholder: 'Author', name: 'author',onChange: this.handleChange, value: author, readOnly: isEdit === 'view' ? true : false, required: true })}  
+              {this.props.formFieldTextElement({
+                    id: 'form-textarea-control-opinion', label: 'Description', placeholder: 'Description', name: 'description',onChange: this.handleChange, value: description, readOnly: isEdit === 'view' ? true : false, required: true })}  
+              
               <Form.Group widths='equal'>
                 <Form.Select
                   fluid
@@ -141,19 +127,9 @@ class AddBook extends React.Component {
                   onChange={this.handleSelect}
                   required
                   disabled={isEdit === 'view' ? true : false}
-                />   
-                <Form.Field
-                  id='form-input-control-first-name'
-                  control={Input}
-                  label='Price'
-                  placeholder='Price'
-                  name='price'
-                  onChange={this.handleChange}
-                  value={price}
-                  required
-                  onKeyDown={this.checkNumericNew}
-                  readOnly={isEdit === 'view' ? true : false}
                 />
+            {this.props.formFieldElement({
+                    id: 'form-input-control-price', label: 'Price', placeholder: 'Price', name: 'price',onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
                 {this.state.isOpen && 
           <Modal
             size={'tiny'}

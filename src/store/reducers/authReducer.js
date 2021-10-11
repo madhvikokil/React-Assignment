@@ -1,6 +1,7 @@
 const initState = {
     authError: false,
     authErrorDescription: null,
+    isSignedUp: false
     // isAuthenticated:  false,
 }
 const authReducer = (state = initState, action) => {
@@ -26,6 +27,7 @@ const authReducer = (state = initState, action) => {
 
         return {
             ...state,
+            isSignedUp: true,
             authError: 'Signup Success,login to continue...'
         }
 
@@ -33,6 +35,7 @@ const authReducer = (state = initState, action) => {
 
         return {
             ...state,
+            isSignedUp: false,
             authError: action.err.message
         }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table } from "semantic-ui-react";
 import { connect } from 'react-redux';
-import { getMyOrders } from '../store/action/userAndBookAction';
+import { getMyOrders } from '../store/action/orderAction';
 class MyOrders extends React.Component {
 
     componentDidMount() {
@@ -41,7 +41,7 @@ class MyOrders extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-      myOrders: state.book.myOrders,
+      myOrders: state.order.myOrders,
     }
   }
 

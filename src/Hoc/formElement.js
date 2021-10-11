@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Radio } from 'semantic-ui-react';
+import { Input, Radio, Form, TextArea } from 'semantic-ui-react';
 
 const formInput =(props) => {
   
@@ -18,6 +18,39 @@ const formInput =(props) => {
     )
 }
 
+const formFieldElement = (props) => {
+    return(
+        <Form.Field
+                  id={props.id}
+                  control={Input}
+                  label={props.label}
+                  placeholder={props.placeholder}
+                  name={props.name}
+                  onChange={props.onChange}
+                  value={props.value}
+                  readOnly={props.readOnly}
+                  onKeyDown={props.onKeyDown}
+                  required={props.required}
+                  />
+    )
+}
+
+const formFieldTextElement = (props) => {
+    return(
+        <Form.Field
+            id={props.id}
+            control={TextArea}
+            label={props.label}
+            placeholder={props.placeholder}
+            name={props.name}
+            onChange={props.onChange}
+            value={props.value}
+            required={props.required}
+            readOnly={props.readOnly}
+        />
+    )
+}
+
 const radioInput =(props) => {
   
     return(
@@ -33,7 +66,9 @@ const radioInput =(props) => {
 
 const formData ={
     formInput : formInput,
-    radioInput: radioInput
+    radioInput: radioInput,
+    formFieldElement: formFieldElement,
+    formFieldTextElement: formFieldTextElement
 }
 
 export default (HocComponent) => {

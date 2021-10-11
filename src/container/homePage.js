@@ -2,7 +2,8 @@ import React from 'react';
 import { Table, Button, Modal } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
-import { getPublishedBookList, placeOrder } from '../store/action/userAndBookAction';
+import { getPublishedBookList } from '../store/action/userAndBookAction';
+import { placeOrder } from '../store/action/orderAction';
 class HomePage extends React.Component {
   constructor(props){
     super(props);
