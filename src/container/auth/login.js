@@ -1,14 +1,14 @@
 import React from 'react';
-import { Button, Grid, Header, Segment } from "semantic-ui-react";
+import { Button, Grid, Header, Segment, Form } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import FormElements from "../Hoc/formElement";
+import FormElements from "../../Hoc/formElement";
 import { withRouter } from "react-router-dom";
-import { authLogin } from './../store/action/authAction';
+import { authLogin } from '../../store/action/authAction';
 class Login extends React.Component {
   constructor(props){
     super(props);
-    this.state={
+    this.state = {
         email:"",
         password:"",
         errorMessages: []
@@ -56,7 +56,7 @@ class Login extends React.Component {
             Log-in to your Account
           </Header>
           {this.state.errorMessages.length !== 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages.map(error => <p>{error}</p>)}</Segment> : null}
-            <form class="ui large form" onSubmit={this.handleSubmit} >
+            <Form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
                     {this.props.formInput({
@@ -72,11 +72,7 @@ class Login extends React.Component {
                   disabled={this.state.email === '' || this.state.password === ''} >Log In
                 </Button>
               </div>
-
-              {/* <div class="ui error message">
-                <p>{this.props.authError}</p>
-              </div> */}
-            </form>
+            </Form>
           <div class="ui message">
             New to us? <Link to="/signup">Sign Up</Link>
           </div>

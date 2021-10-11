@@ -11,7 +11,7 @@ export const routes = [
     {
         name: "signin",
         path: "/signin",
-        componentPath: "login",
+        componentPath: "auth/login",
         component: "Login",
         authRoute: false,
         isExact: false,
@@ -20,7 +20,7 @@ export const routes = [
     {
         name: "signup",
         path: "/signup",
-        componentPath: "signup",
+        componentPath: "auth/signup",
         component: "Signup",
         authRoute: false,
         isExact: false,

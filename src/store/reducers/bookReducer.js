@@ -66,10 +66,21 @@ const bookReducer = (state = initState, action) => {
             }
         
         case 'GET_BOOK_DETAIL':
-            console.log("bookDetail: ", action.details);
             return {
                 ...state,
                 bookDetail: action.details
+            }
+        
+        case 'USER_DETAILS':
+            return{
+                ...state,
+                userDetails: action.details
+            }
+        
+        case 'USER_DETAILS_ERROR':
+            return{
+                ...state,
+                userDetails: action.details
             }
 
         default:

@@ -2,16 +2,20 @@ import './App.css';
 import './assets/semantic/semantic.min.css'
 import React from 'react';
 import { Suspense }from 'react';
-import ProtectedRoute from './routes/privateRoutes';
+import ProtectedRoute from './routes/protectedRoutes';
 import { Route as Router ,Switch } from 'react-router-dom';
 import HeaderElement from './component/navMenu';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
-import {routes} from './routes/routes';
+import { routes } from './routes/routes';
 
 function App(props) {
   let typeOfUser;
   let { auth } = props;
+
+  const NotFound = (props) => {
+    return <h2>404 Not Found</h2>;
+  };
 
   if(auth.uid) {
     let userType = localStorage.getItem('typeOfUser');
@@ -54,7 +58,7 @@ function App(props) {
     }
   );
 
-  let routesList = <Switch>{routeComp}</Switch>
+  let routesList = <Switch>{routeComp}<Router component={NotFound}/></Switch>
   return (
     <div className="App">
       <Suspense fallback={<p>Loading...</p>}>

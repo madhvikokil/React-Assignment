@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Grid, Header, Form, Segment } from "semantic-ui-react";
-import { authSignup } from '../store/action/authAction';
+import { authSignup } from '../../store/action/authAction';
 import { connect } from 'react-redux';
-import FormElements from "../Hoc/formElement";
+import FormElements from "../../Hoc/formElement";
 import { withRouter } from "react-router-dom";
 class Signup extends React.Component {
   constructor(props){
@@ -63,7 +63,6 @@ class Signup extends React.Component {
   }
 
   render() {
-    const userType = localStorage.getItem('typeOfUser');
     if(this.props.isSignedUp) {
       this.props.history.push('signin');
     }

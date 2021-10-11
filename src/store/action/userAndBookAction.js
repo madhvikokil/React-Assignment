@@ -1,6 +1,7 @@
+import { getFirestore } from 'redux-firestore';
 import { v4 as uuidv4 } from 'uuid';
 export const getUsersList = () => {
-    return(dispatch, getState, { getFirebase, getFirestore }) => {
+    return(dispatch, getState, { getFirestore }) => {
         const firestore = getFirestore();
         firestore.collection('users').get().then((res) => {
             let data = [];
@@ -12,6 +13,18 @@ export const getUsersList = () => {
                 dispatch({ type: "GET_USERS_LIST", err});
             }))
     }
+}
+
+export const getUserDetails = (id) => {
+  return (dispatch, getState, {getFirestore}) => {
+      const firestore = getFirestore();
+      firestore.collection('users').doc(id).get().then((res) => {
+        let details = res.data();
+          dispatch({ type: "USER_DETAILS", details })
+      }).catch((err => {
+        dispatch({ type: "USER_DETAILS_ERROR" , err })
+      }))
+  }
 }
 
 export const getBookList = () => {
@@ -114,7 +127,6 @@ export const fetchBookDetails = (id) => {
       
     firestore.collection('books').doc(id).get().then((res) => {
       let details = res.data();
-      console.log("details: ", details);
       dispatch({ type: "GET_BOOK_DETAIL", details });
   }).catch(err => {
     dispatch({ type: 'GET_BOOK_DETAIL' , err});

@@ -1,15 +1,13 @@
 import React from 'react';
-import HomePage from './homePage';
-class Dashboard extends React.Component {
+class NotFound extends React.Component {
 
     render(){
         return(
             <React.Fragment>
-                <HomePage />
+                <h2>404 NOt Found</h2>
             </React.Fragment>
         )
     }
 }
-
-
-export default Dashboard;
+  
+export default NotFound;
