@@ -56,20 +56,35 @@ class AddBook extends React.Component {
       }
     }
 
-    static getDerivedStateFromProps(props, currentState) {
-      if (currentState.id && currentState.id && currentState.id !== props.bookDetail.id) {
-        return {
-          title: props.bookDetail.title,
-          author: props.bookDetail.author,
-          status: props.bookDetail.status,
-          description: props.bookDetail.description,
-          discount: props.bookDetail.discount,
-          price: props.bookDetail.price,
-          userType: props.bookDetail.userType
-        }
-      }
-      return null
-    }
+    // static getDerivedStateFromProps(props, currentState) {
+    //   if (currentState.id && currentState.id && currentState.id !== props.bookDetail.id) {
+    //     return {
+    //       title: props.bookDetail.title,
+    //       author: props.bookDetail.author,
+    //       status: props.bookDetail.status,
+    //       description: props.bookDetail.description,
+    //       discount: props.bookDetail.discount,
+    //       price: props.bookDetail.price,
+    //       userType: props.bookDetail.userType
+    //     }
+    //   }
+    //   return null
+    // }
+
+    componentWillReceiveProps(nextProps) {
+      let isAdd = localStorage.getItem('isEdit');
+      isAdd !== 'add' && nextProps.bookDetail && this.setState({
+        id: nextProps.bookDetail.id,
+        author: nextProps.bookDetail.author,
+        description: nextProps.bookDetail.description,
+        discount: nextProps.bookDetail.discount,
+        price: nextProps.bookDetail.price,
+        status: nextProps.bookDetail.status,
+        title: nextProps.bookDetail.title,
+        userType: nextProps.bookDetail.userType,
+        uid: nextProps.bookDetail.uid
+      })
+  }
 
 
     componentDidMount() {
@@ -140,7 +155,7 @@ class AddBook extends React.Component {
                 {formFieldElement({
                       id: 'form-input-control-price', label: 'Price', placeholder: 'Price', name: 'price', onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
                 {formFieldElement({
-                      id: 'form-input-control-discount', label: 'Discount', placeholder: 'Discount', name: 'discount', onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
+                      id: 'form-input-control-discount', label: 'Discount', placeholder: 'Discount', name: 'discount', onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew, maxLength: 2 })} 
               </Form.Group>
               {this.state.isOpen && 
           <Modal

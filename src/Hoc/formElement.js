@@ -32,6 +32,7 @@ const formFieldElement = (props) => {
             readOnly={props.readOnly}
             onKeyDown={props.onKeyDown}
             required={props.required}
+            maxLength={props.maxLength}
         />
     )
 }
