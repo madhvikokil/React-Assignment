@@ -51,7 +51,10 @@ class BookList extends React.Component {
                     <Table.HeaderCell>Title</Table.HeaderCell>
                     <Table.HeaderCell>Author</Table.HeaderCell>
                     <Table.HeaderCell>Price(Rs.)</Table.HeaderCell>
+                    <Table.HeaderCell>Discount</Table.HeaderCell>
+                    <Table.HeaderCell>Actual Price</Table.HeaderCell>
                     <Table.HeaderCell>Status</Table.HeaderCell>
+                    <Table.HeaderCell>User</Table.HeaderCell>
                     <Table.HeaderCell>Action</Table.HeaderCell>
                 </Table.Row>
                 </Table.Header>
@@ -63,6 +66,9 @@ class BookList extends React.Component {
                         <Table.Cell>{book.title}</Table.Cell>
                         <Table.Cell>{book.author}</Table.Cell>
                         <Table.Cell>{book.price}</Table.Cell>
+                        <Table.Cell>{book.discount}</Table.Cell>
+                        <Table.Cell>{book.actualPrice}</Table.Cell>
+                        <Table.Cell>{book.userType.toUpperCase()}</Table.Cell>
                         <Table.Cell>{book.status}</Table.Cell>
                         <Table.Cell>
                             <Button icon="eye" onClick={() => this.handleEvent(book.id, 'view')}></Button>

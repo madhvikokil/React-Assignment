@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addBook, fetchBookDetails, updateBook } from '../store/action/userAndBookAction';
+import { addBook, fetchBookDetails, updateBook, getUsersList } from '../store/action/userAndBookAction';
 import FormElements from "../Hoc/formElement";
 import { Dimmer, Loader, Modal, Button } from "semantic-ui-react";
 import { withRouter } from "react-router-dom";
@@ -10,14 +10,16 @@ class AddBook extends React.Component {
         super(props);
         this.state = {
             id: "",
-            addedBy: "",
+            // addedBy: "",
             author: "",
             description: "",
-            discount: 0,
+            discount: "",
             price: "",
             status: "",
             title: "",
-            isOpen: false
+            isOpen: false,
+            userType: "",
+            uid: ""
         }
     }
 
@@ -33,10 +35,12 @@ class AddBook extends React.Component {
       }
     }
 
+    formChange = (e, {value}) => {
+      if(value === 'PENDING' || value === 'PUBLISHED') this.setState({ status: value });
+      else this.setState({ userType: value.split(" ")[1], uid: value.split(" ")[0] });
+    }
+
     submitBook = (type) => {
-        let user = localStorage.getItem('typeOfUser');
-        this.setState({ addedBy: user });
-        if(this.state.addedBy !== '') {
           if(type === 'add') {
             this.props.addBook(this.state);
           } else {
@@ -44,7 +48,6 @@ class AddBook extends React.Component {
           }
           this.setState({ isOpen : false });
           this.props.history.goBack();
-        }
     }
 
     checkNumericNew = (event) => {
@@ -57,35 +60,46 @@ class AddBook extends React.Component {
       if (currentState.id && currentState.id && currentState.id !== props.bookDetail.id) {
         return {
           title: props.bookDetail.title,
-          author:props.bookDetail.author,
-          status:props.bookDetail.status,
-          description:props.bookDetail.description,
-          discount:props.bookDetail.discount,
-          price:props.bookDetail.price
+          author: props.bookDetail.author,
+          status: props.bookDetail.status,
+          description: props.bookDetail.description,
+          discount: props.bookDetail.discount,
+          price: props.bookDetail.price,
+          userType: props.bookDetail.userType
         }
       }
       return null
     }
 
+
     componentDidMount() {
+      this.props.getUsersList();
       if(this.props.match.params.id) {
         this.props.fetchBookDetails(this.props.match.params.id);
-      if(this.props.bookDetail) {
-      const updateTitle = this.state.title !== "" ? this.state.title : this.props.bookDetail.title;
-      const updateDescription = this.state.description !== "" ? this.state.description : this.props.bookDetail.description;
-      const updateAuthor = this.state.author !== "" ? this.state.author : this.props.bookDetail.author;
-      const updateStatus = this.state.status !== "" ? this.state.status : this.props.bookDetail.status;
-      const updatePrice = this.state.price !== "" ? this.state.price : this.props.bookDetail.price;
-      const updateDiscount = this.state.discount !== "" ? this.state.discount : this.props.bookDetail.discount;
-      const updateId = this.state.id !== "" ? this.state.id : this.props.bookDetail.id;
-
-      this.setState({ title: updateTitle, description: updateDescription, status: updateStatus, author: updateAuthor, price: updatePrice, id: updateId, discount: updateDiscount });
-      }
+        if(this.props.bookDetail) {
+          const updateTitle = this.state.title !== "" ? this.state.title : this.props.bookDetail.title;
+          const updateDescription = this.state.description !== "" ? this.state.description : this.props.bookDetail.description;
+          const updateAuthor = this.state.author !== "" ? this.state.author : this.props.bookDetail.author;
+          const updateStatus = this.state.status !== "" ? this.state.status : this.props.bookDetail.status;
+          const updatePrice = this.state.price !== "" ? this.state.price : this.props.bookDetail.price;
+          const updateDiscount = this.state.discount !== "" ? this.state.discount : this.props.bookDetail.discount;
+          const updateId = this.state.id !== "" ? this.state.id : this.props.bookDetail.id;
+          const updateUser = this.state.userType !== "" ? this.state.userType : this.props.bookDetail.userType;
+          const updateUid = this.state.uid !== "" ? this.state.uid : this.props.bookDetail.uid;
+          
+          this.setState({ title: updateTitle, description: updateDescription, status: updateStatus, author: updateAuthor, price: updatePrice, id: updateId, discount: updateDiscount, userType: updateUser, uid: updateUid });
+          }
     }
     }
     
 
     render(){
+        let userData = [];
+        if(this.props.userList) {
+          this.props.userList.forEach((data) => {
+            if(data.userType === 'seller') userData.push({ key: data.uid, value: `${data.uid} ${data.userType}`, text: `${data.firstName} ${data.lastName}` });
+          });
+        }
         const dropdown = [
             { key: 'pend', value: 'PENDING', text: 'Pending' },
             { key: 'publish', value: 'PUBLISHED', text: 'Published' },
@@ -100,27 +114,34 @@ class AddBook extends React.Component {
         }
 
         const isEdit = localStorage.getItem('isEdit');
-        const { title, description, author, status, price, discount  } = this.state;
-        const { formFieldElement, formFieldTextElement, selectElement} = this.props;
+        const user = localStorage.getItem('typeOfUser');
+        const { title, description, author, status, price, discount, userType, uid } = this.state;
+        const { formFieldElement, formFieldTextElement, selectElement } = this.props;
 
         return(
         <React.Fragment>
             {this.props.match.params.id ? (isEdit === 'view' ? <h1> Book </h1>: <h1>Edit Book </h1>) : <h1>Add Book</h1>}
             <Form style={{ margin: "0 auto", width: '80%' }}>
-              {formFieldElement({
-                    id: 'form-input-control-first-name', label: 'Title', placeholder: 'Title', name: 'title',onChange: this.handleChange, value: title, readOnly: isEdit === 'view' ? true : false, required: true })}                
-              {formFieldElement({
-                    id: 'form-input-control-last-name', label: 'Author', placeholder: 'Author', name: 'author',onChange: this.handleChange, value: author, readOnly: isEdit === 'view' ? true : false, required: true })}  
-              {formFieldTextElement({
-                    id: 'form-textarea-control-opinion', label: 'Description', placeholder: 'Description', name: 'description',onChange: this.handleChange, value: description, readOnly: isEdit === 'view' ? true : false, required: true })}  
-              
               <Form.Group widths='equal'>
-              {selectElement({
-                      label: 'Status', options:dropdown, name: "status", placeholder: 'Status', value: status, id: "status", onChange: this.handleSelect,required: true, disabled: isEdit === 'view' ? true : false })} 
-              {formFieldElement({
-                    id: 'form-input-control-price', label: 'Price', placeholder: 'Price', name: 'price', onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
-              {formFieldElement({
-                    id: 'form-input-control-discount', label: 'Discount', placeholder: 'Discount', name: 'discount', onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
+                {formFieldElement({
+                      id: 'form-input-control-first-name', label: 'Title', placeholder: 'Title', name: 'title',onChange: this.handleChange, value: title, readOnly: isEdit === 'view' ? true : false, required: true })}                
+                {formFieldElement({
+                      id: 'form-input-control-last-name', label: 'Author', placeholder: 'Author', name: 'author',onChange: this.handleChange, value: author, readOnly: isEdit === 'view' ? true : false, required: true })}
+              </Form.Group>
+              {formFieldTextElement({
+                    id: 'form-textarea-control-opinion', label: 'Description', placeholder: 'Description', name: 'description',onChange: this.handleChange, value: description, readOnly: isEdit === 'view' ? true : false, required: true })}
+              <Form.Group widths='equal'>
+                {selectElement({
+                        label: 'Status', options:dropdown, name: "status", placeholder: 'Status', value: status, id: "status", onChange: this.handleSelect,required: true, disabled: isEdit === 'view' ? true : false })}
+                {user === 'admin' && selectElement({
+                        label: 'Seller Type', options:userData, name: "sellerType", placeholder: 'Seller Type', value: `${uid} ${userType}`, id: "sellerType", onChange: this.formChange,required: true, disabled: isEdit === 'view' ? true : false })}
+              </Form.Group>
+              <Form.Group widths='equal'>
+                {formFieldElement({
+                      id: 'form-input-control-price', label: 'Price', placeholder: 'Price', name: 'price', onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
+                {formFieldElement({
+                      id: 'form-input-control-discount', label: 'Discount', placeholder: 'Discount', name: 'discount', onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
+              </Form.Group>
               {this.state.isOpen && 
           <Modal
             size={'tiny'}
@@ -140,11 +161,10 @@ class AddBook extends React.Component {
                 </Modal.Actions>
             </Modal>
         }
-              </Form.Group>
               {(!this.props.match.params.id || (this.props.match.params.id && isEdit) !== 'view') && <Form.Button
                 // type='submit'
                 color='twitter'
-                disabled={ this.state.author === '' || this.state.description === '' || this.state.price === '' || this.state.status === '' || this.state.title === '' || this.state.discount === '' }
+                disabled={ this.state.author === '' || this.state.description === '' || this.state.price === '' || this.state.status === '' || this.state.title === '' || this.state.discount === '' || user === 'admin' && (this.state.uid === '' || this.state.userType === '')}
                 onClick={() => this.setState({ isOpen : true })}
                 >{this.props.match.params.id && isEdit === 'edit' ? 'Edit Book' : 'Add Book'}</Form.Button>}
             </Form>
@@ -157,7 +177,8 @@ const mapDispatchToProps =(dispatch) => {
     return {
         addBook: (bookDetails)  => dispatch(addBook(bookDetails)),
         fetchBookDetails: (id) => dispatch(fetchBookDetails(id)),
-        updateBook: (bookDetail) => dispatch(updateBook(bookDetail))
+        updateBook: (bookDetail) => dispatch(updateBook(bookDetail)),
+        getUsersList: () => dispatch(getUsersList())
     }
 }
 
@@ -165,7 +186,8 @@ const mapStateToProps = (state) => {
     return {
       bookStatus: state.book.bookStatus,
       isUpdated: state.book.isUpdated,
-      bookDetail: state.book.bookDetail
+      bookDetail: state.book.bookDetail,
+      userList: state.book.userList
     }
   }
 

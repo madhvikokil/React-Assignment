@@ -23,16 +23,8 @@ class Signup extends React.Component {
       })
     }
 
-  handleRadio = (type) => {
-    if(type === 'customer')  {
-      this.setState({
-        typeOfUser: 'seller'
-      })
-    } else {
-      this.setState({
-        typeOfUser: 'customer'
-      })
-    }
+  handleRadio = (e, {value}) => {
+    this.setState({ typeOfUser: value });
   }
 
   handleSubmit = (e) => {
@@ -94,9 +86,9 @@ class Signup extends React.Component {
             </div>
             <div class="field">
             {this.props.radioInput({
-                label: 'Customer', name: "typeOfUser", onChange:() => this.handleRadio('seller'), value: 'customer', checked: this.state.typeOfUser === 'customer'})}        
+                label: 'Customer', name: "typeOfUser", onChange: this.handleRadio, value: 'customer', checked: this.state.typeOfUser === 'customer'})}        
             {this.props.radioInput({
-                label: 'Seller', name: "typeOfUser", onChange:() => this.handleRadio('customer'), value: 'seller', checked: this.state.typeOfUser === 'seller'})}     
+                label: 'Seller', name: "typeOfUser", onChange: this.handleRadio, value: 'seller', checked: this.state.typeOfUser === 'seller'})}     
             </div>
             <Button
               color='twitter'

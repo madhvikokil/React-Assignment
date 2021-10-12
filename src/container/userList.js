@@ -1,19 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Table } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { getUsersList } from '../store/action/userAndBookAction';
-class UserList extends React.Component {
 
-    componentDidMount() {
-        this.props.getUsersList();
-    }
+const UserList = (props) => {
 
-    render(){
+    useEffect(() => {
+        props.getUsersList();
+    }, [])
+
         return(
             <React.Fragment>
                 <h1>Users List</h1>
-                {this.props.userList && this.props.userList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
+                {props.userList && props.userList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
                     <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>Email</Table.HeaderCell>
@@ -24,8 +24,8 @@ class UserList extends React.Component {
                     </Table.Header>
 
                     <Table.Body>
-                        {this.props.userList && this.props.userList.map(user => (
-                        <Table.Row pointer key={user.email} onClick={() => this.props.history.push(`/order/${user.uid}`)}>
+                        {props.userList && props.userList.map(user => (
+                        <Table.Row pointer key={user.email} onClick={() => props.history.push(`/order/${user.uid}`)}>
                             <Table.Cell>{user.email}</Table.Cell>
                             <Table.Cell>{user.firstName}</Table.Cell>
                             <Table.Cell>{user.lastName}</Table.Cell>
@@ -36,7 +36,6 @@ class UserList extends React.Component {
                 </Table> : <h3>No Data Found</h3>}
             </React.Fragment>
         )
-    }
 }
 
 const mapStateToProps = (state) => {

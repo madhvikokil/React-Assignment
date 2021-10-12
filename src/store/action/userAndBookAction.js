@@ -1,4 +1,3 @@
-import { getFirestore } from 'redux-firestore';
 import { v4 as uuidv4 } from 'uuid';
 export const getUsersList = () => {
     return(dispatch, getState, { getFirestore }) => {
@@ -30,9 +29,10 @@ export const getUserDetails = (id) => {
 export const getBookList = () => {
     return(dispatch, getState, { getFirebase, getFirestore }) => {
         const firestore = getFirestore();
+        let uid = localStorage.getItem("uid");
         let userType = localStorage.getItem("typeOfUser");
         if(userType === 'seller') {
-            firestore.collection('books').where('addedBy', '==' , 'seller').get().then((res) => {
+            firestore.collection('books').where('uid', '==' , `${uid}`).get().then((res) => {
                 let data = [];
                 res.forEach((doc) => {
                     data.push(doc.data());
@@ -74,6 +74,9 @@ export const addBook = (bookDetails) => {
     return(dispatch, getSelection, { getFirestore }) => {
         const firestore = getFirestore();
         let id = uuidv4();
+        let user = localStorage.getItem('typeOfUser');
+        let uid = localStorage.getItem('uid');
+        let actualPrice = bookDetails.price - (bookDetails.price * (bookDetails.discount/100));
         firestore.collection('books').doc(id).set({
           id: id,
           author: bookDetails.author,
@@ -82,7 +85,10 @@ export const addBook = (bookDetails) => {
           status: bookDetails.status,
           price: bookDetails.price,
           discount: bookDetails.discount,
-          addedBy: bookDetails.addedBy
+          // addedBy: bookDetails.addedBy,
+          userType: bookDetails.userType || user,
+          uid: bookDetails.uid || uid,
+          actualPrice: actualPrice
       }).then(() => {
             dispatch({ type: 'ADD_BOOK_SUCCESS' });
           }).catch(err => {
@@ -93,6 +99,9 @@ export const addBook = (bookDetails) => {
 export const updateBook = (bookDetails) => {
   return(dispatch, getSelection, { getFirestore }) => {
       const firestore = getFirestore();
+        let actualPrice = bookDetails.price - (bookDetails.price * (bookDetails.discount/100));
+        let user = localStorage.getItem('typeOfUser');
+        let uid = localStorage.getItem('uid');
       firestore.collection('books').doc(bookDetails.id).update({
         id: bookDetails.id,
         author: bookDetails.author,
@@ -101,7 +110,10 @@ export const updateBook = (bookDetails) => {
         status: bookDetails.status,
         price: bookDetails.price,
         discount: bookDetails.discount,
-        addedBy: bookDetails.addedBy
+        // addedBy: bookDetails.addedBy,
+        userType: bookDetails.userType || user,
+        uid: bookDetails.uid || uid,
+        actualPrice: actualPrice
     }).then(() => {
           dispatch({ type: 'UPDATE_BOOK_SUCCESS' });
         }).catch(err => {
