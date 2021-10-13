@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import FormElements from "../../Hoc/formElement";
 import { withRouter } from "react-router-dom";
+import { email, password } from '../../constant/constant';
 import { authLogin } from '../../store/action/authAction';
 class Login extends React.Component {
   constructor(props){
@@ -49,7 +50,7 @@ class Login extends React.Component {
       this.props.history.push('dashboard');
     }
     return (
-      <React.Fragment>
+      <>
         <Grid textAlign="center" style={{ height: "75vh" }} verticalAlign="middle">
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header as="h1" color="teal" textAlign="center">
@@ -59,13 +60,11 @@ class Login extends React.Component {
             <Form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
-                    {this.props.formInput({
-                       placeholder: 'E-mail address', type: "text", name: "email", onChange: this.handleChange, value:this.state.email, icon: 'user', error: this.state.emailError })}                
+                    {this.props.formInput({...email, onChange: this.handleChange, value:this.state.email })}                
                 </div>
 
                 <div class="field">
-                    {this.props.formInput({
-                       placeholder: 'Password', type: "password", name: "password", onChange: this.handleChange, value:this.state.password, icon: 'lock', error: this.state.passwordError })}                
+                    {this.props.formInput({...password, onChange: this.handleChange, value:this.state.password })}                
                 </div>
                 <Button
                   color='twitter'
@@ -80,7 +79,7 @@ class Login extends React.Component {
         </Grid>
 
         {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authErrorDescription}</p>}
-      </React.Fragment>
+      </>
     )
   }
 }

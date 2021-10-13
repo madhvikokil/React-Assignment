@@ -17,7 +17,7 @@ class MyOrders extends React.Component {
 
     render(){
         return(
-            <React.Fragment>
+            <>
             <h1>My Orders List</h1>
             {this.props.myOrders && this.props.myOrders.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
                     <Table.Header>
@@ -44,7 +44,7 @@ class MyOrders extends React.Component {
                         ))}
                     </Table.Body>
                 </Table> : <h3>No Order(s) placed</h3>}
-            </React.Fragment>
+            </>
         )
     }
 }

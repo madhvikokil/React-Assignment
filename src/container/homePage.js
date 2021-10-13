@@ -25,7 +25,7 @@ const HomePage = (props) => {
   }
 
     return (
-      <React.Fragment>
+      <>
         <h3>Books List</h3>
         {props.publishedBookList && props.publishedBookList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
           <Table.Header>
@@ -68,7 +68,7 @@ const HomePage = (props) => {
                 </Modal.Actions>
             </Modal>
         }
-      </React.Fragment> 
+      </> 
     )
 }
 

@@ -10,9 +10,9 @@ class UserList extends React.Component {
 
     render(){
         return(
-            <React.Fragment>
+            <>
                 <AddBook />
-            </React.Fragment>
+            </>
         )
     }
 }

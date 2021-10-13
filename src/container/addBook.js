@@ -4,6 +4,7 @@ import { addBook, fetchBookDetails, updateBook, getUsersList } from '../store/ac
 import FormElements from "../Hoc/formElement";
 import { Dimmer, Loader, Modal, Button } from "semantic-ui-react";
 import { withRouter } from "react-router-dom";
+import { titleOfBook, authorOfBook, descriptionOfBook, statusOfBook, seller, bookPrice, discountRate } from './../constant/constant';
 import { Form } from "semantic-ui-react";
 class AddBook extends React.Component {
     constructor(props){
@@ -134,28 +135,28 @@ class AddBook extends React.Component {
         const { formFieldElement, formFieldTextElement, selectElement } = this.props;
 
         return(
-        <React.Fragment>
+        <>
             {this.props.match.params.id ? (isEdit === 'view' ? <h1> Book </h1>: <h1>Edit Book </h1>) : <h1>Add Book</h1>}
             <Form style={{ margin: "0 auto", width: '80%' }}>
               <Form.Group widths='equal'>
-                {formFieldElement({
-                      id: 'form-input-control-first-name', label: 'Title', placeholder: 'Title', name: 'title',onChange: this.handleChange, value: title, readOnly: isEdit === 'view' ? true : false, required: true })}                
-                {formFieldElement({
-                      id: 'form-input-control-last-name', label: 'Author', placeholder: 'Author', name: 'author',onChange: this.handleChange, value: author, readOnly: isEdit === 'view' ? true : false, required: true })}
+                {formFieldElement({...titleOfBook,
+                    onChange: this.handleChange, value: title, readOnly: isEdit === 'view' ? true : false })}                
+                {formFieldElement({...authorOfBook,
+                    onChange: this.handleChange, value: author, readOnly: isEdit === 'view' ? true : false})}
               </Form.Group>
-              {formFieldTextElement({
-                    id: 'form-textarea-control-opinion', label: 'Description', placeholder: 'Description', name: 'description',onChange: this.handleChange, value: description, readOnly: isEdit === 'view' ? true : false, required: true })}
+              {formFieldTextElement({...descriptionOfBook,
+                  onChange: this.handleChange, value: description, readOnly: isEdit === 'view' ? true : false })}
               <Form.Group widths='equal'>
-                {selectElement({
-                        label: 'Status', options:dropdown, name: "status", placeholder: 'Status', value: status, id: "status", onChange: this.handleSelect,required: true, disabled: isEdit === 'view' ? true : false })}
-                {user === 'admin' && selectElement({
-                        label: 'Seller Type', options:userData, name: "sellerType", placeholder: 'Seller Type', value: `${uid} ${userType}`, id: "sellerType", onChange: this.formChange,required: true, disabled: isEdit === 'view' ? true : false })}
+                {selectElement({...statusOfBook,
+                    options:dropdown, value: status, onChange: this.handleSelect, disabled: isEdit === 'view' ? true : false })}
+                {user === 'admin' && selectElement({...seller,
+                        options:userData, value: `${uid} ${userType}`, onChange: this.formChange, disabled: isEdit === 'view' ? true : false })}
               </Form.Group>
               <Form.Group widths='equal'>
-                {formFieldElement({
-                      id: 'form-input-control-price', label: 'Price', placeholder: 'Price', name: 'price', onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew })} 
-                {formFieldElement({
-                      id: 'form-input-control-discount', label: 'Discount', placeholder: 'Discount', name: 'discount', onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, required: true, onKeyDown: this.checkNumericNew, maxLength: 2 })} 
+                {formFieldElement({...bookPrice,
+                      onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew })} 
+                {formFieldElement({...discountRate,
+                      onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew })} 
               </Form.Group>
               {this.state.isOpen && 
           <Modal
@@ -183,7 +184,7 @@ class AddBook extends React.Component {
                 onClick={() => this.setState({ isOpen : true })}
                 >{this.props.match.params.id && isEdit === 'edit' ? 'Edit Book' : 'Add Book'}</Form.Button>}
             </Form>
-        </React.Fragment>
+        </>
         )
     }
 }

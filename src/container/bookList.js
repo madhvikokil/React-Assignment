@@ -41,7 +41,7 @@ class BookList extends React.Component {
 
     render(){
     return(
-        <React.Fragment>
+        <>
             <h1>Book List</h1>
             <Button position='right' color="twitter" onClick={() => this.addBook('add')}>Add Book</Button>
             {this.props.bookList && this.props.bookList.length > 0 ? <Table singleLine style={{ margin: "20px auto", width: '80%' }}>
@@ -98,7 +98,7 @@ class BookList extends React.Component {
                 </Modal.Actions>
             </Modal>
         }
-        </React.Fragment>
+        </>
         )
     }
 }

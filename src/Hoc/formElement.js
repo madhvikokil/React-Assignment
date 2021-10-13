@@ -1,14 +1,12 @@
 import React from 'react';
 import { Input, Radio, Form, TextArea } from 'semantic-ui-react';
 
-const formInput =(props) => {
+const formInput = (props) => {
   
     return(
         <Input
             type={props.type} 
-            iconPosition='left' 
-            validators={["required"]}
-            errorMessages={["Field Required"]}
+            iconPosition={props.iconPosition}
             placeholder={props.placeholder}
             value={props.value}
             onChange={props.onChange}

@@ -21,10 +21,10 @@ function App(props) {
     let userType = localStorage.getItem('typeOfUser');
     if(userType === 'admin') {
       typeOfUser = 'admin';
-    } else if (userType === 'customer') {
-      typeOfUser = 'customer';
-    } else {
+    } else if (userType === 'seller') {
       typeOfUser = 'seller';
+    } else {
+      typeOfUser = 'customer';
     }
   }
 

@@ -4,6 +4,7 @@ import { authSignup } from '../../store/action/authAction';
 import { connect } from 'react-redux';
 import FormElements from "../../Hoc/formElement";
 import { withRouter } from "react-router-dom";
+import { email, password, firstName, lastName } from '../../constant/constant';
 class Signup extends React.Component {
   constructor(props){
     super(props);
@@ -59,7 +60,7 @@ class Signup extends React.Component {
       this.props.history.push('signin');
     }
     return (
-      <React.Fragment>
+      <>
       <Grid textAlign="center" style={{ height: "75vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h1" color="teal" textAlign="center">
@@ -70,19 +71,19 @@ class Signup extends React.Component {
           <div class="ui stacked segment">
             <div class="field">
                 {this.props.formInput({
-                       placeholder: 'First Name', type: "text", name: "firstName", onChange: this.handleChange, value:this.state.firstName, icon: 'user'})}
+                       ...firstName, onChange: this.handleChange, value:this.state.firstName })}
             </div>
             <div class="field">
                 {this.props.formInput({
-                       placeholder: 'Last Name', type: "text", name: "lastName", onChange: this.handleChange, value:this.state.lastName, icon: 'user'})}                
+                       ...lastName, onChange: this.handleChange, value:this.state.lastName })}                
             </div>
             <div class="field">
                 {this.props.formInput({
-                       placeholder: 'E-mail address', type: "text", name: "email", onChange: this.handleChange, value:this.state.email, icon: 'user'})}                
+                       ...email,  onChange: this.handleChange, value:this.state.email })}                
             </div>
             <div class="field">
                 {this.props.formInput({
-                       placeholder: 'Password', type: "password", name: "password", onChange: this.handleChange, value:this.state.password, icon: 'user' })}                
+                       ...password, onChange: this.handleChange, value:this.state.password })}                
             </div>
             <div class="field">
             {this.props.radioInput({
@@ -95,15 +96,11 @@ class Signup extends React.Component {
               disabled={this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.password === ''}>Sign Up
             </Button>
           </div>
-
-          <div class="ui error message">
-            <p>sefwgrg</p>
-          </div>
       </Form>
       </Grid.Column>
       </Grid>
       {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authError}</p>}
-      </React.Fragment>
+      </>
     )
   }
 }

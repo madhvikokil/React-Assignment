@@ -11,7 +11,7 @@ const UserList = (props) => {
     }, [])
 
         return(
-            <React.Fragment>
+            <>
                 <h1>Users List</h1>
                 {props.userList && props.userList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
                     <Table.Header>
@@ -34,7 +34,7 @@ const UserList = (props) => {
                         ))}
                     </Table.Body>
                 </Table> : <h3>No Data Found</h3>}
-            </React.Fragment>
+            </>
         )
 }
 

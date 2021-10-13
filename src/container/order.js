@@ -19,7 +19,7 @@ function Order(props) {
                 )
         }
         return(
-            <React.Fragment>
+            <>
             <h1>Order Details</h1>
             <Card style={{ margin: '0 auto' }}>
                 <Card.Content>
@@ -58,7 +58,7 @@ function Order(props) {
                         ))}
                     </Table.Body>
                 </Table> : <h3>No Order(s) Found</h3>}
-        </React.Fragment>
+        </>
         )
 }
 

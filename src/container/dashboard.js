@@ -4,9 +4,9 @@ class Dashboard extends React.Component {
 
     render(){
         return(
-            <React.Fragment>
+            <>
                 <HomePage />
-            </React.Fragment>
+            </>
         )
     }
 }
