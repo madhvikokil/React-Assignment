@@ -31,26 +31,16 @@ class Signup extends React.Component {
   handleSubmit = (e) => {
     let errorMessages = [];
     e.preventDefault();
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    // const passwordRegex = "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$";
 
-    let emailRegexCheck = emailRegex.test(String(this.state.email));
-    if(!emailRegexCheck) errorMessages.push("Invalid email address");
-
-    let passwordRegexTest = this.state.password.length > 6;
-    if(!passwordRegexTest) errorMessages.push("Password should be min 6 characters" );
-    
-    if(errorMessages !== []) {
+    const checkError = this.props.validation(this.state.email, this.state.password);    
+    if(checkError.length > 0) {
       this.setState({
-        errorMessages: errorMessages
+        errorMessages: checkError
       })
-    }
-
-    if(emailRegexCheck && passwordRegexTest){
+    } else {
       this.props.authSignup(this.state);
       if(this.props.auth.uid) {
         this.props.history.push("dashboard");
-  
       }
     }
   }

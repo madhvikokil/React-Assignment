@@ -29,7 +29,7 @@ store.firebaseAuthIsReady.then(() => {
         <React.StrictMode>
           <App />
         </React.StrictMode>
-        </ErrorBoundary>
+      </ErrorBoundary>
     </BrowserRouter>
     </Provider>,
     document.getElementById('root')

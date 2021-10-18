@@ -2,7 +2,7 @@ import React from 'react';
 import { Input, Radio, Form, TextArea } from 'semantic-ui-react';
 
 const formInput = (props) => {
-  
+
     return(
         <Input
             type={props.type} 
@@ -81,12 +81,26 @@ const radioInput =(props) => {
     )
 }
 
+const validation = (email, password) => {
+    const errorMessages = [];
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    let emailRegexCheck = emailRegex.test(String(email));
+    if(!emailRegexCheck) errorMessages.push("Invalid email address");
+
+    let passwordRegexTest = password.length > 6;
+    if(!passwordRegexTest) errorMessages.push("Password should be min 6 characters" );
+
+    return errorMessages;
+}
+
 const formData ={
     formInput : formInput,
     radioInput: radioInput,
     formFieldElement: formFieldElement,
     formFieldTextElement: formFieldTextElement,
-    selectElement: selectElement
+    selectElement: selectElement,
+    validation: validation
 }
 
 export default (HocComponent) => {
