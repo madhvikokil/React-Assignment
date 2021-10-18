@@ -12,7 +12,7 @@ const formInput = (props) => {
             onChange={props.onChange}
             icon={props.icon}
             name={props.name}
-        >    
+        >
         </Input>
     )
 }

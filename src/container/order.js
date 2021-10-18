@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
 import { Table, Button, Card, Dimmer, Loader } from "semantic-ui-react";
 import { getUserDetails } from '../store/action/userAndBookAction';
+import { orderMetaData } from '../constant/tableConstant';
+import TableElement from './table';
 import { updateOrderByAdmin, getMyOrders } from '../store/action/orderAction';
 function Order(props) {
 
@@ -32,32 +34,13 @@ function Order(props) {
                 </Card.Description>
                 </Card.Content>
             </Card>
-            {props.myOrders && props.myOrders.length > 0 ? <Table singleLine style={{ margin: "20px auto", width: '80%' }}>
-                    <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>Book Title</Table.HeaderCell>
-                        <Table.HeaderCell>Price</Table.HeaderCell>
-                        <Table.HeaderCell>Discount Applied</Table.HeaderCell>
-                        <Table.HeaderCell>Actual Price</Table.HeaderCell>
-                        <Table.HeaderCell>Status</Table.HeaderCell>
-                        <Table.HeaderCell>Complete the Order</Table.HeaderCell>
-                    </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                        {props.myOrders && props.myOrders.map(order => (
-                        <Table.Row key={order.orderId}>
-                            <Table.Cell>{order.titleOfBook}</Table.Cell>
-                            <Table.Cell>{order.price}</Table.Cell>
-                            <Table.Cell>{order.discount}</Table.Cell>
-                            <Table.Cell>{order.actualPrice}</Table.Cell>
-                            <Table.Cell>{order.status}</Table.Cell>
-                            <Table.Cell>{order.status === 'COMPLETED' ? order.status : 
-                            <Button onClick={() => props.updateOrderByAdmin(order)}>Pending -> Complete</Button>}</Table.Cell>
-                        </Table.Row>
-                        ))}
-                    </Table.Body>
-                </Table> : <h3>No Order(s) Found</h3>}
+                {props.myOrders && props.myOrders.length > 0 ?
+                    <TableElement
+                        list={props.myOrders}
+                        metaData={orderMetaData}
+                        // redirect={'userList'}
+                        actionType={'completeOrder'}
+                    /> : <h3>No Order(s) Found</h3>}
         </>
         )
 }

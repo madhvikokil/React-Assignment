@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
+import TableElement from './table';
+import { publishedBooksMetaData } from '../constant/tableConstant';
 import { getPublishedBookList } from '../store/action/userAndBookAction';
 import { placeOrder } from '../store/action/orderAction';
 
@@ -27,47 +29,13 @@ const HomePage = (props) => {
     return (
       <>
         <h3>Books List</h3>
-        {props.publishedBookList && props.publishedBookList.length > 0 ? <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
-          <Table.Header>
-            <Table.Row>
-              {/* <Table.HeaderCell>Id</Table.HeaderCell> */}
-              <Table.HeaderCell>Title</Table.HeaderCell>
-              <Table.HeaderCell>Author</Table.HeaderCell>
-              <Table.HeaderCell>Price(Rs.)</Table.HeaderCell>
-              <Table.HeaderCell>Discount Applied</Table.HeaderCell>
-              <Table.HeaderCell>Final Price</Table.HeaderCell>
-              <Table.HeaderCell>Action</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-          {props.publishedBookList && props.publishedBookList.map(book => (
-            <Table.Row key={book.id}>
-            {/* <Table.Cell>{user.id}</Table.Cell> */}
-            <Table.Cell>{book.title}</Table.Cell>
-            <Table.Cell>{book.author}</Table.Cell>
-            <Table.Cell>{book.price}</Table.Cell>
-            <Table.Cell>{book.discount}</Table.Cell>
-            <Table.Cell>{book.actualPrice}</Table.Cell>
-            {/* <Table.Cell>{book.price}</Table.Cell> */}
-            <Table.Cell><Button onClick={() => placeMyOrder(book)}>Place Order</Button></Table.Cell>
-            </Table.Row>
-          ))}
-          </Table.Body>
-        </Table> : <h3> No published data found </h3>}
-        {isOpen && 
-          <Modal
-            size={'tiny'}
-            open={isOpen}
-          >
-            <Modal.Header>Place Order Successfully</Modal.Header>
-                <Modal.Actions>
-                  <Button negative onClick={() => setOpen(false)}>
-                    Okay
-                  </Button>
-                </Modal.Actions>
-            </Modal>
-        }
+                {props.publishedBookList && props.publishedBookList.length > 0 ?
+                    <TableElement
+                        list={props.publishedBookList}
+                        metaData={publishedBooksMetaData}
+                        redirect={'bookList'}
+                        actionType={'placeOrderAction'}
+                    /> : <h3>No Published Data Found</h3>}
       </> 
     )
 }
