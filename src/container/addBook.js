@@ -57,54 +57,21 @@ class AddBook extends React.Component {
       }
     }
 
-    // static getDerivedStateFromProps(props, currentState) {
-    //   if (currentState.id && currentState.id && currentState.id !== props.bookDetail.id) {
-    //     return {
-    //       title: props.bookDetail.title,
-    //       author: props.bookDetail.author,
-    //       status: props.bookDetail.status,
-    //       description: props.bookDetail.description,
-    //       discount: props.bookDetail.discount,
-    //       price: props.bookDetail.price,
-    //       userType: props.bookDetail.userType
-    //     }
-    //   }
-    //   return null
-    // }
-
     componentWillReceiveProps(nextProps) {
       let isAdd = localStorage.getItem('isEdit');
-      isAdd !== 'add' && nextProps.bookDetail && this.setState({
-        id: nextProps.bookDetail.id,
-        author: nextProps.bookDetail.author,
-        description: nextProps.bookDetail.description,
-        discount: nextProps.bookDetail.discount,
-        price: nextProps.bookDetail.price,
-        status: nextProps.bookDetail.status,
-        title: nextProps.bookDetail.title,
-        userType: nextProps.bookDetail.userType,
-        uid: nextProps.bookDetail.uid
-      })
-  }
-
+      if (isAdd !== 'add' && nextProps.bookDetail) {
+        for (const [key, value] of Object.entries(nextProps.bookDetail)) {
+          this.setState({
+            [key]: `${value}`
+          });
+        }
+      }
+    }
 
     componentDidMount() {
       this.props.getUsersList();
       if(this.props.match.params.id) {
         this.props.fetchBookDetails(this.props.match.params.id);
-        if(this.props.bookDetail) {
-          const updateTitle = this.state.title !== "" ? this.state.title : this.props.bookDetail.title;
-          const updateDescription = this.state.description !== "" ? this.state.description : this.props.bookDetail.description;
-          const updateAuthor = this.state.author !== "" ? this.state.author : this.props.bookDetail.author;
-          const updateStatus = this.state.status !== "" ? this.state.status : this.props.bookDetail.status;
-          const updatePrice = this.state.price !== "" ? this.state.price : this.props.bookDetail.price;
-          const updateDiscount = this.state.discount !== "" ? this.state.discount : this.props.bookDetail.discount;
-          const updateId = this.state.id !== "" ? this.state.id : this.props.bookDetail.id;
-          const updateUser = this.state.userType !== "" ? this.state.userType : this.props.bookDetail.userType;
-          const updateUid = this.state.uid !== "" ? this.state.uid : this.props.bookDetail.uid;
-          
-          this.setState({ title: updateTitle, description: updateDescription, status: updateStatus, author: updateAuthor, price: updatePrice, id: updateId, discount: updateDiscount, userType: updateUser, uid: updateUid });
-          }
     }
     }
     
