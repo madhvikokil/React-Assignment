@@ -3,6 +3,7 @@ import { Menu, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
+import { adminroutes, customerRoutes, sellerRoutes , openRoutes } from './constant';
 import { logout } from './../store/action/authAction';
 
 class HeaderElement extends Component {
@@ -16,108 +17,46 @@ class HeaderElement extends Component {
 
     return (
       <Segment inverted>
+        <Menu inverted secondary>
         {this.props.auth.uid && userType === 'admin' ?
-        <Menu inverted secondary>
-          <Menu.Item
-            as={Link} to='/dashboard'
-            name='Home'
-            active={activeItem === 'home'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/dashboard/users'
-            name='Users list'
-            active={activeItem === 'userList'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/dashboard/books'
-            name='Book list'
-            active={activeItem === 'bookList'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/dashboard/my-orders'
-            name='My Orders'
-            active={activeItem === 'myOrder'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            position='right'
-            as={Link} to='/'
-            name='Log Out'
-            active={activeItem === 'bookList'}
-            onClick={this.props.logout}
-          />
-        </Menu>: userType === 'customer' ? 
-        <Menu inverted secondary>
-          <Menu.Item
-            as={Link} to='/dashboard'
-            name='Home'
-            active={activeItem === 'home'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/dashboard/my-orders'
-            name='My Order'
-            active={activeItem === 'myOrder'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            position='right'
-            as={Link} to='/'
-            name='Log Out'
-            active={activeItem === 'bookList'}
-            onClick={this.props.logout}
-          />
-        </Menu> : userType === 'seller' ?
-        <Menu inverted secondary>
-          <Menu.Item
-            as={Link} to='/dashboard'
-            name='Home'
-            active={activeItem === 'home'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/dashboard/books'
-            name='Books List'
-            active={activeItem === 'addOrder'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-              as={Link} to='/dashboard/my-orders'
-              name='My Order'
-              active={activeItem === 'myOrder'}
+          adminroutes.map(route => (
+            <Menu.Item
+              position={route.position}
+              as={Link} to={route.to}
+              name={route.name}
+              active={activeItem === route.active}
+              onClick={route.name === 'Log Out' ? this.props.logout : this.handleItemClick}
+            />
+          )) : userType === 'seller' ?
+          sellerRoutes.map(route => (
+            <Menu.Item
+              position={route.position}
+              as={Link} to={route.to}
+              name={route.name}
+              active={activeItem === route.active}
+              onClick={route.name === 'Log Out' ? this.props.logout : this.handleItemClick}
+            />
+          ))
+        : userType === 'customer' ?
+          customerRoutes.map(route => (
+            <Menu.Item
+              position={route.position}
+              as={Link} to={route.to}
+              name={route.name}
+              active={activeItem === route.active}
+              onClick={route.name === 'Log Out' ? this.props.logout : this.handleItemClick}
+            />
+          ))
+        : openRoutes.map(route => (
+            <Menu.Item
+              position={route.position}
+              as={Link} to={route.to}
+              name={route.name}
+              active={activeItem === route.active}
               onClick={this.handleItemClick}
             />
-          <Menu.Item
-            position='right'
-            as={Link} to='/'
-            name='Log Out'
-            active={activeItem === 'bookList'}
-            onClick={this.props.logout}
-          />
-        </Menu> :
-        <Menu inverted secondary>
-          <Menu.Item
-            as={Link} to='/'
-            name='Home'
-            active={activeItem === 'home'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/signin'
-            name='Sign In'
-            active={activeItem === 'signin'}
-            onClick={this.handleItemClick}
-          />
-          <Menu.Item
-            as={Link} to='/signup'
-            name='Sign Up'
-            active={activeItem === 'signup'}
-            onClick={this.handleItemClick}
-          />
-        </Menu>}
+          ))
+        }</Menu>
       </Segment>
     )
   }
