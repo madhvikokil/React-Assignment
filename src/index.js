@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import reducer from './store/reducers/index';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import ErrorBoundary from './Hoc/errorBoundary';
 import { reduxFirestore, getFirestore } from 'redux-firestore';
 import { reactReduxFirebase, getFirebase } from 'react-redux-firebase';
 import fbConfig from './fbConfig';
@@ -24,9 +25,11 @@ store.firebaseAuthIsReady.then(() => {
   ReactDOM.render(
     <Provider store={store}>
     <BrowserRouter>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <ErrorBoundary>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+        </ErrorBoundary>
     </BrowserRouter>
     </Provider>,
     document.getElementById('root')

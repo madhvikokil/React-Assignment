@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import TableElement from './table';
 import { bookMetaData } from '../constant/tableConstant';
-import { getBookList, deleteBook } from '../store/action/userAndBookAction';
+import { getBookList } from '../store/action/userAndBookAction';
 class BookList extends React.Component {
     constructor(props){
         super(props);
@@ -23,24 +23,6 @@ class BookList extends React.Component {
         this.props.history.push('create');
     }
 
-    handleEvent = (id, isEdit) => {
-        this.setState({ deleteId : id });
-        if(isEdit === 'delete') {
-            this.setState({ isOpen : true });
-        } else {
-            localStorage.setItem('isEdit', isEdit);
-            this.props.history.push(`books/${id}`);
-        }
-    }
-
-    deleteHandler = () => {
-      this.props.deleteBook(this.state.deleteId);
-      if(this.props.isDeleted) {
-        this.props.getBookList();
-        this.setState({ isOpen : false });
-      }
-    }
-
     render(){
     return(
         <>
@@ -50,7 +32,6 @@ class BookList extends React.Component {
               <TableElement
                 list={this.props.bookList}
                 metaData={bookMetaData}
-                redirect={'bookList'}
                 actionType={'bookListAction'}
               /> : <h3>No Data Found</h3>}
         </>
@@ -62,14 +43,12 @@ class BookList extends React.Component {
 const mapStateToProps = (state) => {
     return {
       bookList: state.book.bookList,
-      isDeleted: state.book.isDeleted
     }
   }
 
 const mapDispatchToProps =(dispatch) => {
     return {
       getBookList: ()  => dispatch(getBookList()),
-      deleteBook: (id) => dispatch(deleteBook(id))
     }
   }
   

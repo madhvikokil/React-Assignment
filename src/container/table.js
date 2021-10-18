@@ -53,7 +53,7 @@ class TableElement extends React.Component {
 
     return(
         <>
-        <Table singleLine style={{ margin: "0 auto", width: '80%' }}>
+        <Table singleLine style={{ margin: "20px auto", width: '80%' }}>
             <Table.Header>
                 <Table.Row>
                     {metaData.map(metaData => (<Table.HeaderCell>{metaData.title}</Table.HeaderCell>))}
@@ -74,7 +74,7 @@ class TableElement extends React.Component {
                             <><Button onClick={() => this.placeMyOrder(data)}>Place Order</Button></> 
                             : metaData.key === '' && actionType === 'completeOrder' ?
                             data.status === 'COMPLETED' ? data.status : <Button onClick={() => this.updateOrderByAdmin(data)}>Pending -> Complete</Button>
-                          : ''}
+                            : ''}
                         </Table.Cell>
                         ))}
                     </Table.Row>

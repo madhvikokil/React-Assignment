@@ -38,7 +38,6 @@ function Order(props) {
                     <TableElement
                         list={props.myOrders}
                         metaData={orderMetaData}
-                        // redirect={'userList'}
                         actionType={'completeOrder'}
                     /> : <h3>No Order(s) Found</h3>}
         </>
