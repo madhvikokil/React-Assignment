@@ -8,6 +8,10 @@ import { email, password, firstName, lastName } from '../../constant/constant';
 class Signup extends React.Component {
   constructor(props){
     super(props);
+    this.firstNameInput = React.createRef();
+    this.lastNameInput = React.createRef();
+    this.emailInput = React.createRef();
+    this.passwordInput = React.createRef();
     this.state={
         firstName:"",
         lastName:"",
@@ -18,22 +22,22 @@ class Signup extends React.Component {
     }
   }
 
-  handleChange = (e) => {
-      this.setState({
-        [e.target.name]: e.target.value
-      })
-    }
 
   handleRadio = (e, {value}) => {
     this.setState({ typeOfUser: value });
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-
-    const checkError = this.props.validation(this.state.email, this.state.password);    
+    await this.setState({
+      email: this.emailInput.current.inputRef.current.value, 
+      password: this.passwordInput.current.inputRef.current.value,
+      firstName: this.firstNameInput.current.inputRef.current.value,
+      lastName: this.lastNameInput.current.inputRef.current.value
+    })
+    const checkError = this.props.validation(this.state, 'signup');    
     if(checkError.length > 0) {
-      this.setState({
+      await this.setState({
         errorMessages: checkError
       })
     } else {
@@ -60,19 +64,19 @@ class Signup extends React.Component {
           <div class="ui stacked segment">
             <div class="field">
                 {this.props.formInput({
-                       ...firstName, onChange: this.handleChange, value:this.state.firstName })}
+                       ...firstName, ref: this.firstNameInput })}
             </div>
             <div class="field">
                 {this.props.formInput({
-                       ...lastName, onChange: this.handleChange, value:this.state.lastName })}                
+                       ...lastName, ref: this.lastNameInput })}                
             </div>
             <div class="field">
                 {this.props.formInput({
-                       ...email,  onChange: this.handleChange, value:this.state.email })}                
+                       ...email, ref: this.emailInput })}                
             </div>
             <div class="field">
                 {this.props.formInput({
-                       ...password, onChange: this.handleChange, value:this.state.password })}                
+                       ...password, ref: this.passwordInput })}                
             </div>
             <div class="field">
             {this.props.radioInput({
@@ -82,7 +86,7 @@ class Signup extends React.Component {
             </div>
             <Button
               color='twitter'
-              disabled={this.state.firstName === '' || this.state.lastName === '' || this.state.email === '' || this.state.password === ''}>Sign Up
+              >Sign Up
             </Button>
           </div>
       </Form>

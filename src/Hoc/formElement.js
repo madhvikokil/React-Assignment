@@ -2,14 +2,17 @@ import React from 'react';
 import { Input, Radio, Form, TextArea } from 'semantic-ui-react';
 
 const formInput = (props) => {
-
+    const changeHandler = (e) => {
+        return [e.target.name] = e.target.value
+    }
     return(
         <Input
             type={props.type} 
             iconPosition={props.iconPosition}
             placeholder={props.placeholder}
             value={props.value}
-            onChange={props.onChange}
+            onChange={changeHandler}
+            ref={props.ref}
             icon={props.icon}
             name={props.name}
         >
@@ -81,14 +84,18 @@ const radioInput =(props) => {
     )
 }
 
-const validation = (email, password) => {
+const validation = (props, type) => {
     const errorMessages = [];
     const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-    let emailRegexCheck = emailRegex.test(String(email));
+    if(type === 'login' && (props.email === '' || props.password === '') || type === 'signup' &&
+    (props.email === '' || props.password === ''|| props.firstName === '' || props.lastName === '')) {
+        errorMessages.push('Enter the fields');
+        return errorMessages;
+    }
+    let emailRegexCheck = emailRegex.test(String(props.email));
     if(!emailRegexCheck) errorMessages.push("Invalid email address");
 
-    let passwordRegexTest = password.length > 6;
+    let passwordRegexTest = props.password.length > 6;
     if(!passwordRegexTest) errorMessages.push("Password should be min 6 characters" );
 
     return errorMessages;

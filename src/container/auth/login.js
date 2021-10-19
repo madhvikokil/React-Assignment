@@ -9,6 +9,8 @@ import { authLogin } from '../../store/action/authAction';
 class Login extends React.Component {
   constructor(props){
     super(props);
+    this.emailInput = React.createRef();
+    this.passwordInput = React.createRef();
     this.state = {
         email:"",
         password:"",
@@ -16,17 +18,15 @@ class Login extends React.Component {
     }
   }
 
-  handleChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
-  }
-
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    const checkError = this.props.validation(this.state.email, this.state.password);    
+    await this.setState({
+      email: this.emailInput.current.inputRef.current.value, 
+      password: this.passwordInput.current.inputRef.current.value
+    })
+    const checkError = this.props.validation(this.state, 'login');    
     if(checkError.length > 0) {
-      this.setState({
+      await this.setState({
         errorMessages: checkError
       })
     } else {
@@ -50,15 +50,15 @@ class Login extends React.Component {
             <Form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
-                    {this.props.formInput({...email, onChange: this.handleChange, value:this.state.email })}                
+                    {this.props.formInput({...email, ref: this.emailInput })}                
                 </div>
 
                 <div class="field">
-                    {this.props.formInput({...password, onChange: this.handleChange, value:this.state.password })}                
+                    {this.props.formInput({...password, ref: this.passwordInput })}                
                 </div>
                 <Button
                   color='twitter'
-                  disabled={this.state.email === '' || this.state.password === ''} >Log In
+                  >Log In
                 </Button>
               </div>
             </Form>
