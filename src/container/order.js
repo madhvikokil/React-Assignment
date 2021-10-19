@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router-dom";
-import { Table, Button, Card, Dimmer, Loader } from "semantic-ui-react";
+import { Card, Dimmer, Loader } from "semantic-ui-react";
 import { getUserDetails } from '../store/action/userAndBookAction';
 import { orderMetaData } from '../constant/tableConstant';
 import TableElement from './table';

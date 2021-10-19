@@ -27,12 +27,10 @@ function App(props) {
       typeOfUser = 'customer';
     }
   }
+  const getComponent = component => React.lazy(() => import(`./container/${component}`));
 
   const routeComp = routes.map(
     ({ path, name, componentPath, isExact, authRoute, roles }) => {
-      let Component = React.lazy(() => {
-        return import(`./container/${componentPath}`);
-      });
       if (authRoute) {
         return (
           <ProtectedRoute
@@ -40,7 +38,7 @@ function App(props) {
             path={path}
             authRoute={authRoute}
             isAuthenticated={auth.uid}
-            component={Component}
+            component={getComponent(componentPath)}
             key={name}
             roles={roles}
           />
@@ -50,7 +48,7 @@ function App(props) {
           <Router
             exact={isExact}
             path={path}
-            component={Component}
+            component={getComponent(componentPath)}
             key={name}
           />
         );

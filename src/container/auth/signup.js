@@ -29,7 +29,6 @@ class Signup extends React.Component {
   }
 
   handleSubmit = (e) => {
-    let errorMessages = [];
     e.preventDefault();
 
     const checkError = this.props.validation(this.state.email, this.state.password);    
