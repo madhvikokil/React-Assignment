@@ -1,113 +1,143 @@
 import React from 'react';
-import { Input, Radio, Form, TextArea } from 'semantic-ui-react';
+import { Radio, Form, Dropdown, Input } from 'semantic-ui-react';
+import { validations } from '../utility/validation.js';
+import { withRouter } from "react-router-dom";
+import { map, some } from 'lodash';
 
-const formInput = (props) => {
-    const changeHandler = (e) => {
-        return [e.target.name] = e.target.value
-    }
-    return(
-        <Input
-            type={props.type} 
-            iconPosition={props.iconPosition}
-            value={props.value}
-            onChange={changeHandler}
-            ref={props.ref}
-            icon={props.icon}
-            name={props.name}
-        >
-        </Input>
-    )
-}
+export default function HocComponent(WrappedComponent, initialFormObj = {}, initialFormErrors = {}) {
+    return class extends React.Component {
+        constructor(props) {
+          super(props);
 
-const formFieldElement = (props) => {
-    return(
-        <Form.Field
-            id={props.id}
-            control={Input}
-            label={props.label}
-            name={props.name}
-            onChange={props.onChange}
-            value={props.value}
-            readOnly={props.readOnly}
-            onKeyDown={props.onKeyDown}
-            required={props.required}
-            maxLength={props.maxLength}
-        />
-    )
-}
+          this.state = {
+            formValue: initialFormObj,
+            formErrors: initialFormErrors,
+            isFormValid: false,
+            isDirtyForm: false
+            }
+        }
+     onChange = (event) => {
+         this.setState({formValue: {...this.state.formValue,[event.target.name]: event.target.value}});
+         this.setState({isDirtyForm: true})
+            console.log("state: ", this.state);
+    };
+     onBlur = (event, rules) => {
 
-const formFieldTextElement = (props) => {
-    return(
-        <Form.Field
-            id={props.id}
-            control={TextArea}
-            label={props.label}
-            name={props.name}
-            onChange={props.onChange}
-            value={props.value}
-            required={props.required}
-            readOnly={props.readOnly}
-        />
-    )
-}
+         if(rules.length){
 
-const selectElement = (props) => {
-    return(
-        <Form.Select
-            fluid
-            label={props.label}
-            options={props.options}
-            name={props.name}
-            value={props.value}
-            id={props.id}
-            onChange={props.onChange}
-            required={props.required}
-            disabled={props.disabled}
-        />
-    )
-}
-
-const radioInput =(props) => {
+            const valid = rules.map((r)=>({[r]: validations(r,event.target.value)}))
+            this.setState({formErrors: {...this.state.formErrors,[event.target.name]: valid}})
+         }
+    };
+         
+     formInput = (props) => {
+        return (
+            <Form.Input
+                type={props.type}
+                error={props.error}
+                iconPosition={props.iconPosition}
+                value={props.value}
+                onChange={this.onChange}
+                onBlur={(e)=>this.onBlur(e,props.rules || [])}
+                icon={props.icon}
+                name={props.name}
+                rules={props.rules}
+                {...props}
+            >
+            </Form.Input>
+            )
+        }
   
-    return(
-        <Radio
-            label={props.label}
-            name={props.name}
-            value={props.value}
-            checked={props.checked}
-            onChange={props.onChange}
-        />
-    )
-}
-
-const validation = (props, type) => {
-    const errorMessages = [];
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if(type === 'login' && (props.email === '' || props.password === '') || type === 'signup' &&
-    (props.email === '' || props.password === ''|| props.firstName === '' || props.lastName === '')) {
-        errorMessages.push('Enter the fields');
-        return errorMessages;
+        
+    onChangeRadio = (event, {value}) => {
+        const user = 'typeOfUser';
+        this.setState({formValue: {...this.state.formValue,[user]: value}});
     }
-    let emailRegexCheck = emailRegex.test(String(props.email));
-    if(!emailRegexCheck) errorMessages.push("Invalid email address");
+     radioInput = (props) => {
+             return (
+                 <Form.Radio
+                 label={props.label}
+                 value={props.value}
+                 onChange={(e, result) => this.onChangeRadio(e, result)}
+                 checked={props.checked}
+                 name={props.name}   
+                 usertype={props.usertype} 
+                 />)
+         }
+     dropdown = (props) => {
+             return (
+                 <Dropdown
+                 label={props.label}
+                 value={props.value}
+                 onChange={props.onChange}
+                 name={props.name}   
+                 placeholder={props.placeholder}
+                 options={props.options} 
+                 selection
+                 />)
+         }
+         
+     formTextArea = (props) => {
+             return (
+                 <Form.TextArea
+                 name={props.name}  
+                 label={props.label}
+                 value={props.value}
+                 placeholder={props.placeholder}
+                 onChange={props.onChange}
+               />)
+         }
+     Validation(email, password) {
+             let error = {};
+             const regex =
+               /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+             if (!email || regex.test(email) === false) {
+                 error["email"] = "Please enter valid username.";
+             } 
+             if(password.length < 6){
+                 error["password"] = "Please add at least 6 charachter.";
+             }
+            return error
+         }
+         
+    // isFormValid = () => {
+    //     let array = [];
+    //     for (const property in this.state.formErrors) {
+    //     const r = this.state.formErrors[property].every(item => !!Object.values(item)[0]);
+    //     array.push(r);
+          
+    //     }
+    //     return !array.includes(false)
+    // }
+    
+   // const [formValue, setFormValue] = useState(initialFormValue)
+     render() {
+         console.log("this.state.formErrors: ", this.isFormValid1);
+         console.log("check: ", map(this.state.formErrors, (f) => f));
+         console.log("check:2 ", map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0])));
+         console.log("check:3 ", map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0]), (s) => s.some(false)));
 
-    let passwordRegexTest = props.password.length > 6;
-    if(!passwordRegexTest) errorMessages.push("Password should be min 6 characters" );
+        //  console.log("check:2 ", map(this.state.formErrors, (f) => map(f => f)));
 
-    return errorMessages;
-}
 
-const formData ={
-    formInput : formInput,
-    radioInput: radioInput,
-    formFieldElement: formFieldElement,
-    formFieldTextElement: formFieldTextElement,
-    selectElement: selectElement,
-    validation: validation
-}
-
-export default (HocComponent) => {
-    return function wrappedRender(args){
-        return <HocComponent formData={formData}/>
+        const smartElement = {
+            formInput : this.formInput,
+            radioInput:this.radioInput,
+            dropdown:this.dropdown,
+            formTextArea:this.formTextArea,
+            validation:this.Validation,
+            getValues:()=>this.state.formValue,
+            stateData: this.state,
+        //    isFormValid: this.isFormValid,
+           isFormValid1:() => map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0]))
+           
+        }
+        const formMeta = {
+            smartElement,
+            formErrors:this.state.formErrors,
+            data:this.state.formValue
+        }
+        return <WrappedComponent {...formMeta} />
+     }
     }
 }

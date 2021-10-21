@@ -6,37 +6,49 @@ import FormElements from "../../Hoc/formElement";
 import { withRouter } from "react-router-dom";
 import { email, password } from '../../constant/constant';
 import { authLogin } from '../../store/action/authAction';
+
+const initialFormObj = {
+  email: '',
+  password: ''
+}
+
+const initialFormErrors = {
+  email: [{required: false}, {email: false}],
+  password: [{ required:false}, {password: false}]
+};
+
 class Login extends React.Component {
   constructor(props){
     super(props);
-    this.emailInput = React.createRef();
-    this.passwordInput = React.createRef();
-    this.state = {
-        email:"",
-        password:"",
-        errorMessages: []
-    }
   }
-
   handleSubmit = async (e) => {
     e.preventDefault();
-    await this.setState({
-      email: this.emailInput.current.inputRef.current.value, 
-      password: this.passwordInput.current.inputRef.current.value
-    })
-    const checkError = this.props.validation(this.state, 'login');    
-    if(checkError.length > 0) {
-      await this.setState({
-        errorMessages: checkError
-      })
-    } else {
-      this.props.authLogin(this.state);
+    const { smartElement, data } = this.props;
+    // console.log("authL " this.props.auth);
+    console.log("isFormValid: ", smartElement.isFormValid);
+    const val = smartElement.isFormValid1();
+    if(!val.includes(false)) {
+      this.props.authLogin(data);
     }
+    // await this.setState({
+    //   email: this.emailInput.current.inputRef.current.value, 
+    //   password: this.passwordInput.current.inputRef.current.value
+    // })
+    // const checkError = this.props.validation(this.state, 'login');    
+    // if(checkError.length > 0) {
+    //   await this.setState({
+    //     errorMessages: checkError
+    //   })
+    // } else {
+      // const {data} = this.props;
+      // console.log("data: ", data);
+    // }
   }
 
   render() {
     const userType = localStorage.getItem('typeOfUser');
-    const { formData } = this.props;
+    const { smartElement, data, formErrors } = this.props;
+    console.log("this.props", this.props);
     if(this.props.auth.uid && userType) {
       this.props.history.push('dashboard');
     }
@@ -47,15 +59,16 @@ class Login extends React.Component {
           <Header as="h1" color="teal" textAlign="center">
             Log-in to your Account
           </Header>
-          {this.state.errorMessages.length > 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages.map(error => <p>{error}</p>)}</Segment> : null}
             <Form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
-                    {formData.formInput({...email, ref: this.emailInput })}                
+                    {smartElement.formInput({...email, error: smartElement.stateData.isDirtyForm && formErrors.email && formErrors.email.length ? formErrors.email.some(r=>r["required"]) ? formErrors.email.some(r=>r["email"])? "" :"Invalid Email" : 'Email Required' : "",
+
+})}                
                 </div>
 
                 <div class="field">
-                    {formData.formInput({...password, ref: this.passwordInput })}                
+                    {smartElement.formInput({...password, error: smartElement.stateData.isDirtyForm && formErrors.password && formErrors.password.length ? formErrors.password.some(r=>r["required"]) ? formErrors.password.some(r=>r["password"])? "" :"Invalid Password" : 'Password Required' : "" })}                
                 </div>
                 <Button
                   color='twitter'
@@ -68,8 +81,9 @@ class Login extends React.Component {
           </div>
         </Grid.Column>
         </Grid>
-
         {this.props.authError && <p style={{ padding: "20px", backgroundColor: 'grey' }}>{this.props.authErrorDescription}</p>}
+
+        
       </>
     )
   }
@@ -88,5 +102,6 @@ const mapStateToProps = (state) => {
     // isAuthenticated: state.auth.isAuthenticated
   }
 }
+export default (FormElements((connect(mapStateToProps, mapDispatchToProps)(withRouter(Login))), initialFormObj, initialFormErrors));
 
-export default FormElements(withRouter(connect(mapStateToProps, mapDispatchToProps)(Login)));
+// export default connect(mapStateToProps, mapDispatchToProps)(withRouter(FormElements(Login, initialFormObj, initialFormErrors)));

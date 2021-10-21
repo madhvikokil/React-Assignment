@@ -3,7 +3,8 @@ export const email = {
     type: "text",
     name: "email",
     icon: "user",
-    iconPosition: "left"
+    iconPosition: "left",
+    rules:['required', 'email']
 }
 
 export const password = {
@@ -11,7 +12,8 @@ export const password = {
     type: "password",
     name: "password",
     icon: "lock",
-    iconPosition: "left"
+    iconPosition: "left",
+    rules:['required', 'password']
 }
 
 export const firstName = {
@@ -19,7 +21,8 @@ export const firstName = {
     icon: "user",
     type: "text",
     name: "firstName",
-    iconPosition: "left"
+    iconPosition: "left",
+    rules:['required']
 }
 
 export const lastName = {
@@ -27,7 +30,8 @@ export const lastName = {
     icon: "user",
     type: "text",
     name: "lastName",
-    iconPosition: "left"
+    iconPosition: "left",
+    rules:['required']
 }
 
 export const titleOfBook = {

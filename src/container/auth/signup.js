@@ -5,21 +5,24 @@ import { connect } from 'react-redux';
 import FormElements from "../../Hoc/formElement";
 import { withRouter } from "react-router-dom";
 import { email, password, firstName, lastName } from '../../constant/constant';
+const initialFormObj = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  password: '',
+  typeOfUser: "customer",
+}
+
+const initialFormErrors = {
+  firstName: [{required: false}],
+  lastName: [{ required:false}],
+  email: [{required: false}, {email: false}],
+  password: [{ required:false}, {password: false}]
+};
 class Signup extends React.Component {
   constructor(props){
     super(props);
-    this.firstNameInput = React.createRef();
-    this.lastNameInput = React.createRef();
-    this.emailInput = React.createRef();
-    this.passwordInput = React.createRef();
-    this.state={
-        firstName:"",
-        lastName:"",
-        email:"",
-        password:"",
-        typeOfUser: "customer",
-        errorMessages: []
-    }
+
   }
 
 
@@ -28,28 +31,30 @@ class Signup extends React.Component {
   }
 
   handleSubmit = async (e) => {
+    const { data } = this.props;
     e.preventDefault();
-    await this.setState({
-      email: this.emailInput.current.inputRef.current.value, 
-      password: this.passwordInput.current.inputRef.current.value,
-      firstName: this.firstNameInput.current.inputRef.current.value,
-      lastName: this.lastNameInput.current.inputRef.current.value
-    })
-    const checkError = this.props.validation(this.state, 'signup');    
-    if(checkError.length > 0) {
-      await this.setState({
-        errorMessages: checkError
-      })
-    } else {
-      this.props.authSignup(this.state);
+    // await this.setState({
+    //   email: this.emailInput.current.inputRef.current.value, 
+    //   password: this.passwordInput.current.inputRef.current.value,
+    //   firstName: this.firstNameInput.current.inputRef.current.value,
+    //   lastName: this.lastNameInput.current.inputRef.current.value
+    // })
+    // const checkError = this.props.validation(this.state, 'signup');    
+    // if(checkError.length > 0) {
+    //   await this.setState({
+    //     errorMessages: checkError
+    //   })
+    // } else {
+      this.props.authSignup(data);
       if(this.props.auth.uid) {
         this.props.history.push("dashboard");
       }
     }
-  }
+  // }
 
   render() {
-    const { formData } = this.props;
+    const { smartElement, data, formErrors } = this.props;
+
     if(this.props.isSignedUp) {
       this.props.history.push('signin');
     }
@@ -60,30 +65,30 @@ class Signup extends React.Component {
         <Header as="h1" color="teal" textAlign="center">
           Register/Signup
         </Header>
-        {this.state.errorMessages.length !== 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages.map(error => <p>{error}</p>)}</Segment> : null}
+        {/* {this.state.errorMessages.length !== 0 ? <Segment style= {{ display: "block"}} stacked>{this.state.errorMessages.map(error => <p>{error}</p>)}</Segment> : null} */}
         <Form class="ui large form" onSubmit={this.handleSubmit}>
           <div class="ui stacked segment">
             <div class="field">
-                {formData.formInput({
-                       ...firstName, ref: this.firstNameInput })}
+                {smartElement.formInput({
+                       ...firstName, error: formErrors.firstName && formErrors.firstName.length ? formErrors.firstName.some(r=>r["required"]) ? '' : 'First name Required' : "" })}
             </div>
             <div class="field">
-                {formData.formInput({
-                       ...lastName, ref: this.lastNameInput })}                
+                {smartElement.formInput({
+                       ...lastName, error: formErrors.lastName && formErrors.lastName.length ? formErrors.lastName.some(r=>r["required"]) ? '' : 'Last name Required' : "" })}                
             </div>
             <div class="field">
-                {formData.formInput({
-                       ...email, ref: this.emailInput })}                
+                {smartElement.formInput({
+                       ...email, error: formErrors.email && formErrors.email.length ? formErrors.email.some(r=>r["required"]) ? formErrors.email.some(r=>r["email"])? "" :"Invalid Email" : 'Email Required' : "" })}                
             </div>
             <div class="field">
-                {formData.formInput({
-                       ...password, ref: this.passwordInput })}                
+                {smartElement.formInput({
+                       ...password, error: formErrors.password && formErrors.password.length ? formErrors.password.some(r=>r["required"]) ? formErrors.password.some(r=>r["password"])? "" :"Invalid Password" : 'Password Required' : "" })}                
             </div>
             <div class="field">
-            {formData.radioInput({
-                label: 'Customer', name: "typeOfUser", onChange: this.handleRadio, value: 'customer', checked: this.state.typeOfUser === 'customer'})}        
-            {formData.radioInput({
-                label: 'Seller', name: "typeOfUser", onChange: this.handleRadio, value: 'seller', checked: this.state.typeOfUser === 'seller'})}     
+            {smartElement.radioInput({
+                label: 'Customer', name: "typeOfUser", value: 'customer', checked: data.typeOfUser === 'customer'})}        
+            {smartElement.radioInput({
+                label: 'Seller', name: "typeOfUser", value: 'seller', checked: data.typeOfUser === 'seller'})}     
             </div>
             <Button
               color='twitter'
@@ -112,4 +117,4 @@ const mapStateToProps = (state) => {
     isSignedUp: state.auth.isSignedUp
   }
 }
-export default FormElements(withRouter(connect(mapStateToProps, mapDispatchToProps)(Signup)));
+export default (FormElements((connect(mapStateToProps, mapDispatchToProps)(withRouter(Signup))), initialFormObj, initialFormErrors));
