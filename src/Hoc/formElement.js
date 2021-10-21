@@ -9,7 +9,6 @@ const formInput = (props) => {
         <Input
             type={props.type} 
             iconPosition={props.iconPosition}
-            placeholder={props.placeholder}
             value={props.value}
             onChange={changeHandler}
             ref={props.ref}
@@ -26,7 +25,6 @@ const formFieldElement = (props) => {
             id={props.id}
             control={Input}
             label={props.label}
-            placeholder={props.placeholder}
             name={props.name}
             onChange={props.onChange}
             value={props.value}
@@ -44,7 +42,6 @@ const formFieldTextElement = (props) => {
             id={props.id}
             control={TextArea}
             label={props.label}
-            placeholder={props.placeholder}
             name={props.name}
             onChange={props.onChange}
             value={props.value}
@@ -61,7 +58,6 @@ const selectElement = (props) => {
             label={props.label}
             options={props.options}
             name={props.name}
-            placeholder={props.placeholder}
             value={props.value}
             id={props.id}
             onChange={props.onChange}
@@ -112,6 +108,6 @@ const formData ={
 
 export default (HocComponent) => {
     return function wrappedRender(args){
-        return <HocComponent {...formData}/>
+        return <HocComponent formData={formData}/>
     }
 }

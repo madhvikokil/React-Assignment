@@ -99,30 +99,30 @@ class AddBook extends React.Component {
         const isEdit = localStorage.getItem('isEdit');
         const user = localStorage.getItem('typeOfUser');
         const { title, description, author, status, price, discount, userType, uid } = this.state;
-        const { formFieldElement, formFieldTextElement, selectElement } = this.props;
+        const { formData } = this.props;
 
         return(
         <>
             {this.props.match.params.id ? (isEdit === 'view' ? <h1> Book </h1>: <h1>Edit Book </h1>) : <h1>Add Book</h1>}
             <Form style={{ margin: "0 auto", width: '80%' }}>
               <Form.Group widths='equal'>
-                {formFieldElement({...titleOfBook,
+                {formData.formFieldElement({...titleOfBook,
                     onChange: this.handleChange, value: title, readOnly: isEdit === 'view' ? true : false })}                
-                {formFieldElement({...authorOfBook,
+                {formData.formFieldElement({...authorOfBook,
                     onChange: this.handleChange, value: author, readOnly: isEdit === 'view' ? true : false})}
               </Form.Group>
-              {formFieldTextElement({...descriptionOfBook,
+              {formData.formFieldTextElement({...descriptionOfBook,
                   onChange: this.handleChange, value: description, readOnly: isEdit === 'view' ? true : false })}
               <Form.Group widths='equal'>
-                {selectElement({...statusOfBook,
+                {formData.selectElement({...statusOfBook,
                     options:dropdown, value: status, onChange: this.handleSelect, disabled: isEdit === 'view' ? true : false })}
-                {user === 'admin' && selectElement({...seller,
+                {user === 'admin' && formData.selectElement({...seller,
                         options:userData, value: `${uid} ${userType}`, onChange: this.formChange, disabled: isEdit === 'view' ? true : false })}
               </Form.Group>
               <Form.Group widths='equal'>
-                {formFieldElement({...bookPrice,
+                {formData.formFieldElement({...bookPrice,
                       onChange: this.handleChange, value: price, readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew })} 
-                {formFieldElement({...discountRate,
+                {formData.formFieldElement({...discountRate,
                       onChange: this.handleChange, value: discount, readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew })} 
               </Form.Group>
               {this.state.isOpen && 

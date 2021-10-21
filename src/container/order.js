@@ -5,6 +5,7 @@ import { Card, Dimmer, Loader } from "semantic-ui-react";
 import { getUserDetails } from '../store/action/userAndBookAction';
 import { orderMetaData } from '../constant/tableConstant';
 import TableElement from './table';
+import { Button } from "semantic-ui-react";
 import { updateOrderByAdmin, getMyOrders } from '../store/action/orderAction';
 function Order(props) {
 
@@ -13,13 +14,24 @@ function Order(props) {
         props.getMyOrders(props.match.params.id);
     }, [])
 
-        if(!props.userDetails) {
-            return (
-                <Dimmer active>
-                    <Loader size='medium'>Loading</Loader>
-                </Dimmer>
-                )
-        }
+    const updateOrderByAdmin = (data) => {
+        props.updateOrderByAdmin(data);
+        props.getMyOrders(props.match.params.id);
+      }
+
+    const orderList = (data) => {
+        return (
+            data.status === 'COMPLETED' ? data.status : <Button onClick={() => updateOrderByAdmin(data)}>Pending -> Complete</Button>
+        )
+    }
+
+    if(!props.userDetails) {
+        return (
+            <Dimmer active>
+                <Loader size='medium'>Loading</Loader>
+            </Dimmer>
+            )
+    }
         return(
             <>
             <h1>Order Details</h1>
@@ -39,6 +51,7 @@ function Order(props) {
                         list={props.myOrders}
                         metaData={orderMetaData}
                         actionType={'completeOrder'}
+                        jsx={orderList}
                     /> : <h3>No Order(s) Found</h3>}
         </>
         )

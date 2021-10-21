@@ -1,10 +1,10 @@
 import React from 'react';
-import { Button } from "semantic-ui-react";
+import { Button, Modal } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import TableElement from './table';
 import { bookMetaData } from '../constant/tableConstant';
-import { getBookList } from '../store/action/userAndBookAction';
+import { getBookList, deleteBook } from '../store/action/userAndBookAction';
 class BookList extends React.Component {
     constructor(props){
         super(props);
@@ -23,6 +23,34 @@ class BookList extends React.Component {
         this.props.history.push('create');
     }
 
+    handleEvent = (id, isEdit) => {
+      this.setState({ deleteId : id });
+        if(isEdit === 'delete') {
+            this.setState({ isOpen : true });
+        } else {
+            localStorage.setItem('isEdit', isEdit);
+            this.props.history.push(`books/${id}`);
+        }
+    }
+
+    deleteHandler = async () => {
+      await this.props.deleteBook(this.state.deleteId);
+        if(this.props.isDeleted) {
+          await this.props.getBookList();
+          await this.setState({ isOpen : false });
+        }
+      }
+
+    bookListing = (data) => {
+      return(
+        <>
+          <Button icon="eye" onClick={() => this.handleEvent(data.id, 'view')}></Button>
+          <Button icon="delete" onClick={() => this.handleEvent(data.id, 'delete')}></Button> 
+          <Button icon="edit" onClick={() => this.handleEvent(data.id, 'edit')}></Button> 
+        </>
+      )
+    }
+
     render(){
     return(
         <>
@@ -33,7 +61,26 @@ class BookList extends React.Component {
                 list={this.props.bookList}
                 metaData={bookMetaData}
                 actionType={'bookListAction'}
+                jsx={this.bookListing}
               /> : <h3>No Data Found</h3>}
+
+              <Modal
+                  size={'tiny'}
+                  open={this.state.isOpen}
+              >
+                  <Modal.Header>Delete a book</Modal.Header>
+                    <Modal.Content>
+                      <p>Are you sure you want delete the book?</p>
+                    </Modal.Content>
+                      <Modal.Actions>
+                        <Button negative onClick={() => this.setState({ isOpen: false })}>
+                          No, Cancel
+                        </Button>
+                        <Button positive onClick={this.deleteHandler}>
+                          Yes, Delete
+                        </Button>
+                      </Modal.Actions>
+              </Modal>
         </>
 
         )
@@ -43,12 +90,14 @@ class BookList extends React.Component {
 const mapStateToProps = (state) => {
     return {
       bookList: state.book.bookList,
+      isDeleted: state.book.isDeleted
     }
   }
 
 const mapDispatchToProps =(dispatch) => {
     return {
       getBookList: ()  => dispatch(getBookList()),
+      deleteBook: (id) => dispatch(deleteBook(id)),
     }
   }
   

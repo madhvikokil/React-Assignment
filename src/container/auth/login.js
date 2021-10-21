@@ -36,6 +36,7 @@ class Login extends React.Component {
 
   render() {
     const userType = localStorage.getItem('typeOfUser');
+    const { formData } = this.props;
     if(this.props.auth.uid && userType) {
       this.props.history.push('dashboard');
     }
@@ -50,11 +51,11 @@ class Login extends React.Component {
             <Form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
-                    {this.props.formInput({...email, ref: this.emailInput })}                
+                    {formData.formInput({...email, ref: this.emailInput })}                
                 </div>
 
                 <div class="field">
-                    {this.props.formInput({...password, ref: this.passwordInput })}                
+                    {formData.formInput({...password, ref: this.passwordInput })}                
                 </div>
                 <Button
                   color='twitter'

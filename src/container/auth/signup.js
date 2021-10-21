@@ -49,6 +49,7 @@ class Signup extends React.Component {
   }
 
   render() {
+    const { formData } = this.props;
     if(this.props.isSignedUp) {
       this.props.history.push('signin');
     }
@@ -63,25 +64,25 @@ class Signup extends React.Component {
         <Form class="ui large form" onSubmit={this.handleSubmit}>
           <div class="ui stacked segment">
             <div class="field">
-                {this.props.formInput({
+                {formData.formInput({
                        ...firstName, ref: this.firstNameInput })}
             </div>
             <div class="field">
-                {this.props.formInput({
+                {formData.formInput({
                        ...lastName, ref: this.lastNameInput })}                
             </div>
             <div class="field">
-                {this.props.formInput({
+                {formData.formInput({
                        ...email, ref: this.emailInput })}                
             </div>
             <div class="field">
-                {this.props.formInput({
+                {formData.formInput({
                        ...password, ref: this.passwordInput })}                
             </div>
             <div class="field">
-            {this.props.radioInput({
+            {formData.radioInput({
                 label: 'Customer', name: "typeOfUser", onChange: this.handleRadio, value: 'customer', checked: this.state.typeOfUser === 'customer'})}        
-            {this.props.radioInput({
+            {formData.radioInput({
                 label: 'Seller', name: "typeOfUser", onChange: this.handleRadio, value: 'seller', checked: this.state.typeOfUser === 'seller'})}     
             </div>
             <Button
