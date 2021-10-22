@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Form, Dropdown, Input } from 'semantic-ui-react';
+import {  Form, Input, TextArea } from 'semantic-ui-react';
 import { validations } from '../utility/validation.js';
 import { withRouter } from "react-router-dom";
 import { map, some } from 'lodash';
@@ -16,10 +16,15 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
             isDirtyForm: false
             }
         }
-     onChange = (event) => {
+    
+    bindValues = (data) => {
+        console.log("state: ", data);
+            this.setState({ formValue: {...data} });
+        }
+    
+    onChange = (event) => {
          this.setState({formValue: {...this.state.formValue,[event.target.name]: event.target.value}});
          this.setState({isDirtyForm: true})
-            console.log("state: ", this.state);
     };
      onBlur = (event, rules) => {
 
@@ -49,27 +54,32 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
         }
   
         
-    onChangeRadio = (event, {value}) => {
-        const user = 'typeOfUser';
-        this.setState({formValue: {...this.state.formValue,[user]: value}});
+    onChangeRadio = (event, {typeOfUser}) => {
+        this.setState({formValue: {...this.state.formValue,['typeOfUser']: typeOfUser}});
     }
      radioInput = (props) => {
              return (
                  <Form.Radio
                  label={props.label}
                  value={props.value}
-                 onChange={(e, result) => this.onChangeRadio(e, result)}
+                 onChange={this.onChangeRadio}
+                 onBlur={(e)=>this.onBlur(e,props.rules || [])}
                  checked={props.checked}
                  name={props.name}   
-                 usertype={props.usertype} 
+                 typeOfUser={props.typeOfUser} 
                  />)
          }
-     dropdown = (props) => {
+    onSelect = (e, {value}) => {
+        if(value === 'PENDING' || value === 'PUBLISHED') this.setState({ formValue: {...this.state.formValue,['status']: value} });
+        else this.setState({ formValue: {...this.state.formValue, ['userType']: value.split(" ")[1], ['uid']: value.split(" ")[0] }});
+    }
+     selectElement = (props) => {
              return (
-                 <Dropdown
+                 <Form.Dropdown
                  label={props.label}
                  value={props.value}
-                 onChange={props.onChange}
+                 onChange={this.onSelect}
+                 onBlur={(e)=>this.onBlur(e,props.rules || [])}
                  name={props.name}   
                  placeholder={props.placeholder}
                  options={props.options} 
@@ -77,59 +87,54 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
                  />)
          }
          
-     formTextArea = (props) => {
-             return (
-                 <Form.TextArea
-                 name={props.name}  
-                 label={props.label}
-                 value={props.value}
-                 placeholder={props.placeholder}
-                 onChange={props.onChange}
-               />)
-         }
-     Validation(email, password) {
-             let error = {};
-             const regex =
-               /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-             if (!email || regex.test(email) === false) {
-                 error["email"] = "Please enter valid username.";
-             } 
-             if(password.length < 6){
-                 error["password"] = "Please add at least 6 charachter.";
-             }
-            return error
-         }
+         formFieldElement = (props) => {
+            return(
+                <Form.Field
+                    id={props.id}
+                    control={Input}
+                    label={props.label}
+                    name={props.name}
+                    onChange={this.onChange}
+                    onBlur={(e)=>this.onBlur(e,props.rules || [])}
+                    rules={props.rules}
+                    value={props.value ? props.value : ''}
+                    readOnly={props.readOnly}
+                    onKeyDown={props.onKeyDown}
+                    required={props.required}
+                    maxLength={props.maxLength}
+                    {...props}
+                />
+            )
+        }
+        formFieldTextElement = (props) => {
+            return(
+                <Form.Field
+                    id={props.id}
+                    control={TextArea}
+                    label={props.label}
+                    name={props.name}
+                    onChange={this.onChange}
+                    onBlur={(e)=>this.onBlur(e,props.rules || [])}
+                    rules={props.rules}
+                    value={props.value}
+                    required={props.required}
+                    readOnly={props.readOnly}
+                    {...props}
+                />
+            )
+        }
          
-    // isFormValid = () => {
-    //     let array = [];
-    //     for (const property in this.state.formErrors) {
-    //     const r = this.state.formErrors[property].every(item => !!Object.values(item)[0]);
-    //     array.push(r);
-          
-    //     }
-    //     return !array.includes(false)
-    // }
-    
-   // const [formValue, setFormValue] = useState(initialFormValue)
      render() {
-         console.log("this.state.formErrors: ", this.isFormValid1);
-         console.log("check: ", map(this.state.formErrors, (f) => f));
-         console.log("check:2 ", map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0])));
-         console.log("check:3 ", map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0]), (s) => s.some(false)));
-
-        //  console.log("check:2 ", map(this.state.formErrors, (f) => map(f => f)));
-
-
         const smartElement = {
             formInput : this.formInput,
             radioInput:this.radioInput,
-            dropdown:this.dropdown,
-            formTextArea:this.formTextArea,
-            validation:this.Validation,
-            getValues:()=>this.state.formValue,
+            selectElement:this.selectElement,
+            formFieldTextElement:this.formFieldTextElement,
+            formFieldElement: this.formFieldElement,
+            // getValues:()=>this.state.formValue,
             stateData: this.state,
-        //    isFormValid: this.isFormValid,
-           isFormValid1:() => map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0]))
+            bindValues: this.bindValues,
+            isFormValid1:() => map(this.state.formErrors, (f) => f.every(r => !!Object.values(r)[0]))
            
         }
         const formMeta = {

@@ -25,7 +25,6 @@ class Login extends React.Component {
     e.preventDefault();
     const { smartElement, data } = this.props;
     // console.log("authL " this.props.auth);
-    console.log("isFormValid: ", smartElement.isFormValid);
     const val = smartElement.isFormValid1();
     if(!val.includes(false)) {
       this.props.authLogin(data);
@@ -48,7 +47,6 @@ class Login extends React.Component {
   render() {
     const userType = localStorage.getItem('typeOfUser');
     const { smartElement, data, formErrors } = this.props;
-    console.log("this.props", this.props);
     if(this.props.auth.uid && userType) {
       this.props.history.push('dashboard');
     }

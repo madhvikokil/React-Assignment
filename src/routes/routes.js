@@ -32,7 +32,7 @@ export const routes = [
         componentPath: "order",
         component: "Order",
         authRoute: true,
-        isExact: true,
+        isExact: false,
         roles: ['admin']
     },
     {

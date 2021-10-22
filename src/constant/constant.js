@@ -38,42 +38,50 @@ export const titleOfBook = {
     id: "form-input-control-first-name",
     label: "Title",
     name: "title",
-    required: true
+    required: true,
+    rules:['required']
 }
 
 export const authorOfBook = {
     id: "form-input-control-author-name",
     label: "Author", 
     name: "author",
-    required: true 
+    required: true ,
+    rules:['required']
 }
 
 export const descriptionOfBook = {
     id: "form-textarea-control-opinion",
     label: "Description",
     name: "description",
-    required: true
+    required: true,
+    rules:['required']
 }
 
 export const statusOfBook = {
+    id: 'status',
     label: 'Status',
     name: "status",
     required: true,
-    id: "status"
+    id: "status",
+    rules:['required']
 }
 
 export const seller = {
+    id: 'seller',
     label: 'Seller Type',
     name: "sellerType",
     id: "sellerType",
-    required: true
+    required: true,
+    rules:['required']
 }
 
 export const bookPrice ={
     id: 'form-input-control-price',
     label: 'Price',
     name: 'price',
-    require: true
+    required: true,
+    rules:['required']
 }
 
 export const discountRate = {
@@ -81,5 +89,6 @@ export const discountRate = {
     label: 'Discount',
     name: 'discount', 
     required: true,
-    maxLength: 2
+    maxLength: 2,
+    rules:['required']
 }
