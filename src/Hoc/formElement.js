@@ -70,8 +70,19 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
                  />)
          }
     onSelect = (e, {value}) => {
-        if(value === 'PENDING' || value === 'PUBLISHED') this.setState({ formValue: {...this.state.formValue,['status']: value} });
-        else this.setState({ formValue: {...this.state.formValue, ['userType']: value.split(" ")[1], ['uid']: value.split(" ")[0] }});
+        const rules = ['required'];
+        if(value === 'PENDING' || value === 'PUBLISHED') {
+            const valid = rules.map((r)=>({[r]: validations(r, value)}));
+            this.setState({ formValue: {...this.state.formValue,['status']: value} });
+            this.setState({ formErrors: {...this.state.formErrors,['status']: valid} });
+
+        }
+        else {
+            const valid = rules.map((r)=>({[r]: validations(r, value)}));
+            this.setState({ formValue: {...this.state.formValue, ['userType']: value.split(" ")[1], ['uid']: value.split(" ")[0] }});
+            this.setState({formErrors: {...this.state.formErrors,['userType']: valid,['uid']: valid}});
+        
+        }
     }
      selectElement = (props) => {
              return (
@@ -79,10 +90,13 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
                  label={props.label}
                  value={props.value}
                  onChange={this.onSelect}
-                 onBlur={(e)=>this.onBlur(e,props.rules || [])}
                  name={props.name}   
+                 rules={props.rules}
                  placeholder={props.placeholder}
                  options={props.options} 
+                 required={props.required}
+                 error={props.error}
+                 {...props}
                  selection
                  />)
          }

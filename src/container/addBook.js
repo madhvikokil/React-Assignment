@@ -7,14 +7,14 @@ import { withRouter } from "react-router-dom";
 import { titleOfBook, authorOfBook, descriptionOfBook, statusOfBook, seller, bookPrice, discountRate } from './../constant/constant';
 import { Form } from "semantic-ui-react";
 const initialFormObj = {
-  id: "",
+  // id: "",
   author: "",
   description: "",
   discount: "",
   price: "",
   status: "",
   title: "",
-  isOpen: false,
+  // isOpen: false,
   userType: "",
   uid: ""
 }
@@ -73,12 +73,36 @@ class AddBook extends React.PureComponent {
       }
     }
 
+    handleSubmit = () => {
+      const { smartElement, data } = this.props;
+      const isEdit = localStorage.getItem('isEdit');
+      const val = smartElement.isFormValid1();
+      if(isEdit === 'edit') {
+        this.setState({ isOpen : true });
+      }
+      if (!val.includes(false)) {
+        this.setState({ isOpen : true });
+      }
+    }
+
     render(){
         let userData = [];
+        const user = localStorage.getItem('typeOfUser');
+        const id = localStorage.getItem('uid');
+
         if(this.props.userList) {
-          this.props.userList.forEach((data) => {
-            if(data.userType === 'seller') userData.push({ key: data.uid, value: `${data.uid} ${data.userType}`, text: `${data.firstName} ${data.lastName}` });
+            this.props.userList.map((data) => {
+              if(data.uid === id && data.userType === 'seller') {
+                userData.push({ key: data.uid, value: `${data.uid} ${data.userType}`, text: `${data.firstName} ${data.lastName}` });
+              }
           });
+          
+          if(userData.length === 0) {this.props.userList.forEach((data) => {
+            if(data.userType === 'seller') {
+              userData.push({ key: data.uid, value: `${data.uid} ${data.userType}`, text: `${data.firstName} ${data.lastName}` });
+            }
+          });
+        }
         }
         const dropdown = [
             { key: 'pend', value: 'PENDING', text: 'Pending' },
@@ -94,7 +118,8 @@ class AddBook extends React.PureComponent {
         }
 
         const isEdit = localStorage.getItem('isEdit');
-        const user = localStorage.getItem('typeOfUser');
+        // const user = localStorage.getItem('typeOfUser');
+
         const { smartElement, data, formErrors } = this.props;
 
         return(
@@ -108,19 +133,19 @@ class AddBook extends React.PureComponent {
                     readOnly: isEdit === 'view' ? true : false, error: !data.author && smartElement.stateData.isDirtyForm && formErrors.author && formErrors.author.length ? formErrors.author.some(r=>r["required"]) ? '' : 'Author is Required' : "" })}
               </Form.Group>
               {smartElement.formFieldTextElement({...descriptionOfBook,value: data.description,
-                  readOnly: isEdit === 'view' ? true : false, error: smartElement.stateData.isDirtyForm && formErrors.description && formErrors.description.length ? formErrors.description.some(r=>r["required"]) ? '' : 'Description is Required' : "" })}
+                  readOnly: isEdit === 'view' ? true : false, error: !data.description && smartElement.stateData.isDirtyForm && formErrors.description && formErrors.description.length ? formErrors.description.some(r=>r["required"]) ? '' : 'Description is Required' : "" })}
                            <Form.Group widths='equal'>
                 {smartElement.selectElement({...statusOfBook, value: data.status,
-                    options:dropdown, disabled: isEdit === 'view' ? true : false, error: smartElement.stateData.isDirtyForm && formErrors.status && formErrors.status.length ? formErrors.status.some(r=>r["required"]) ? '' : 'Status is Required' : "" })}
-                {user === 'admin' && smartElement.selectElement({...seller,value: `${data.uid} ${data.userType}`,
-                        options:userData, disabled: isEdit === 'view' ? true : false, error: smartElement.stateData.isDirtyForm && formErrors.author && formErrors.author.length ? formErrors.author.some(r=>r["required"]) ? '' : 'Seller Type is Required' : "" })}
+                    options:dropdown, disabled: isEdit === 'view' ? true : false, error: !data.status && smartElement.stateData.isDirtyForm && formErrors.status && formErrors.status.length ? formErrors.status.some(r=>r["required"]) ? '' : 'Status is Required' : "" })}
+                {smartElement.selectElement({...seller,value: `${data.uid} ${data.userType}`,
+                        options:userData, disabled: isEdit === 'view' ? true : false, error: smartElement.stateData.isDirtyForm && formErrors.uid && formErrors.uid.length ? formErrors.uid.some(r=>r["required"]) ? '' : 'Seller Type is Required' : "" && formErrors.uid && formErrors.userType.length ? formErrors.userType.some(r=>r["required"]) ? '' : 'Seller Type is Required' : ""})}
               </Form.Group>
               <Form.Group widths='equal'>
-                {smartElement.formFieldElement({...bookPrice, value: data.price, 
-                      readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew, error: smartElement.stateData.isDirtyForm && formErrors.price && formErrors.price.length ? formErrors.price.some(r=>r["required"]) ? '' : 'Price is Required' : ""})} 
+                {smartElement.formFieldElement({...bookPrice, value: data.price,
+                      readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew, error: !data.price && smartElement.stateData.isDirtyForm && formErrors.price && formErrors.price.length ? formErrors.price.some(r=>r["required"]) ? '' : 'Price is Required' : ""})} 
                 {smartElement.formFieldElement({...discountRate, value: data.discount, 
                       readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew,
-                      error: smartElement.stateData.isDirtyForm && formErrors.discount && formErrors.discount.length ? formErrors.discount.some(r=>r["required"]) ? '' : 'Discount is Required' : "" })} 
+                      error: !data.discount && smartElement.stateData.isDirtyForm && formErrors.discount && formErrors.discount.length ? formErrors.discount.some(r=>r["required"]) ? '' : 'Discount is Required' : "" })} 
               </Form.Group>
               {this.state.isOpen && 
           <Modal
@@ -145,7 +170,7 @@ class AddBook extends React.PureComponent {
                 // type='submit'
                 color='twitter'
                 // disabled={ this.state.author === '' || this.state.description === '' || this.state.price === '' || this.state.status === '' || this.state.title === '' || this.state.discount === '' || user === 'admin' && (this.state.uid === '' || this.state.userType === '')}
-                onClick={() => this.setState({ isOpen : true })}
+                onClick={() => this.handleSubmit()}
                 >{this.props.match.params.id && isEdit === 'edit' ? 'Edit Book' : 'Add Book'}</Form.Button>}
             </Form>
         </>
