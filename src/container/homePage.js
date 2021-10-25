@@ -5,6 +5,7 @@ import TableElement from './table';
 import { Button, Modal } from "semantic-ui-react";
 import { publishedBooksMetaData } from '../constant/tableConstant';
 import { placeOrder } from '../store/action/orderAction';
+import { Dimmer, Loader } from "semantic-ui-react";
 import { getPublishedBookList } from '../store/action/userAndBookAction';
 
 const HomePage = (props) => {
@@ -29,6 +30,14 @@ const HomePage = (props) => {
     return (
       <Button onClick={() => placeMyOrder(data)}>Place Order</Button>
     )
+  }
+
+  if(!props.publishedBookList){
+    return (
+      <Dimmer active>
+          <Loader size='medium'>Loading</Loader>
+      </Dimmer>
+      )
   }
     return (
 

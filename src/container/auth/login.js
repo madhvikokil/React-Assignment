@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid, Header, Segment, Form } from "semantic-ui-react";
+import { Button, Grid, Header, Form } from "semantic-ui-react";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import FormElements from "../../Hoc/formElement";
@@ -18,35 +18,23 @@ const initialFormErrors = {
 };
 
 class Login extends React.Component {
-  constructor(props){
-    super(props);
-  }
   handleSubmit = async (e) => {
     e.preventDefault();
     const { smartElement, data } = this.props;
-    // console.log("authL " this.props.auth);
     const val = smartElement.isFormValid1();
     if(!val.includes(false)) {
       this.props.authLogin(data);
     }
-    // await this.setState({
-    //   email: this.emailInput.current.inputRef.current.value, 
-    //   password: this.passwordInput.current.inputRef.current.value
-    // })
-    // const checkError = this.props.validation(this.state, 'login');    
-    // if(checkError.length > 0) {
-    //   await this.setState({
-    //     errorMessages: checkError
-    //   })
-    // } else {
-      // const {data} = this.props;
-      // console.log("data: ", data);
-    // }
+  }
+
+  errorHandle = (type, isData) => {
+    const { smartElement } = this.props;
+    return smartElement.stateData.isDirtyForm && isData.length ? isData.some(r=>r["required"]) ? isData.some(r=>r[type])? false : `Invalid ${type}` : `${type} Required` : false
   }
 
   render() {
     const userType = localStorage.getItem('typeOfUser');
-    const { smartElement, data, formErrors } = this.props;
+    const { smartElement, formErrors } = this.props;
     if(this.props.auth.uid && userType) {
       this.props.history.push('dashboard');
     }
@@ -60,13 +48,11 @@ class Login extends React.Component {
             <Form class="ui large form" onSubmit={this.handleSubmit} >
               <div class="ui stacked segment">
                 <div class="field">
-                    {smartElement.formInput({...email, error: smartElement.stateData.isDirtyForm && formErrors.email && formErrors.email.length ? formErrors.email.some(r=>r["required"]) ? formErrors.email.some(r=>r["email"])? "" :"Invalid Email" : 'Email Required' : "",
-
-})}                
+                    {smartElement.formInput({...email, error:this.errorHandle('email',formErrors.email)})}                
                 </div>
 
                 <div class="field">
-                    {smartElement.formInput({...password, error: smartElement.stateData.isDirtyForm && formErrors.password && formErrors.password.length ? formErrors.password.some(r=>r["required"]) ? formErrors.password.some(r=>r["password"])? "" :"Invalid Password" : 'Password Required' : "" })}                
+                    {smartElement.formInput({...password, error: this.errorHandle('password', formErrors.password) })}                
                 </div>
                 <Button
                   color='twitter'

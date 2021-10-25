@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { userMetaData } from '../constant/tableConstant';
 import TableElement from './table';
+import { Dimmer, Loader } from "semantic-ui-react";
 import { getUsersList } from '../store/action/userAndBookAction';
 
 const UserList = (props) => {
@@ -11,6 +12,13 @@ const UserList = (props) => {
         props.getUsersList();
     }, [])
 
+    if(!props.userList) {
+      return (
+        <Dimmer active>
+            <Loader size='medium'>Loading</Loader>
+        </Dimmer>
+        )
+    }
         return(
             <>
                 <h1>Users List</h1>

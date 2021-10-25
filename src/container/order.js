@@ -30,7 +30,7 @@ function Order(props) {
             <Dimmer active>
                 <Loader size='medium'>Loading</Loader>
             </Dimmer>
-            )
+        )
     }
         return(
             <>

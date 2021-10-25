@@ -63,7 +63,6 @@ export const statusOfBook = {
     label: 'Status',
     name: "status",
     required: true,
-    id: "status",
     rules:['required']
 }
 
@@ -71,7 +70,6 @@ export const seller = {
     id: 'seller',
     label: 'Seller Type',
     name: "sellerType",
-    id: "sellerType",
     required: true,
     rules:['required']
 }

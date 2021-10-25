@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { myOrderMetaData } from '../constant/tableConstant';
 import TableElement from './table';
+import { Dimmer, Loader } from "semantic-ui-react";
 import { getMyOrders, getAllOrders } from '../store/action/orderAction';
 class MyOrders extends React.Component {
 
@@ -17,6 +18,14 @@ class MyOrders extends React.Component {
     }
 
     render(){
+      if(!this.props.myOrders) {
+        return (
+          <Dimmer active>
+              <Loader size='medium'>Loading</Loader>
+          </Dimmer>
+          )
+      }
+      
         return(
             <>
             <h1>My Orders List</h1>

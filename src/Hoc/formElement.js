@@ -1,8 +1,7 @@
 import React from 'react';
 import {  Form, Input, TextArea } from 'semantic-ui-react';
 import { validations } from '../utility/validation.js';
-import { withRouter } from "react-router-dom";
-import { map, some } from 'lodash';
+import { map } from 'lodash';
 
 export default function HocComponent(WrappedComponent, initialFormObj = {}, initialFormErrors = {}) {
     return class extends React.Component {
@@ -12,30 +11,27 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
           this.state = {
             formValue: initialFormObj,
             formErrors: initialFormErrors,
-            isFormValid: false,
             isDirtyForm: false
             }
         }
     
     bindValues = (data) => {
-        console.log("state: ", data);
-            this.setState({ formValue: {...data} });
-        }
+        this.setState({ formValue: {...data} });
+    }
     
     onChange = (event) => {
          this.setState({formValue: {...this.state.formValue,[event.target.name]: event.target.value}});
          this.setState({isDirtyForm: true})
     };
-     onBlur = (event, rules) => {
 
-         if(rules.length){
-
+    onBlur = (event, rules) => {
+        if(rules.length){
             const valid = rules.map((r)=>({[r]: validations(r,event.target.value)}))
             this.setState({formErrors: {...this.state.formErrors,[event.target.name]: valid}})
-         }
+        }
     };
          
-     formInput = (props) => {
+    formInput = (props) => {
         return (
             <Form.Input
                 type={props.type}
@@ -50,56 +46,54 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
                 {...props}
             >
             </Form.Input>
-            )
-        }
+        )
+    }
   
-        
-    onChangeRadio = (event, {typeOfUser}) => {
-        this.setState({formValue: {...this.state.formValue,['typeOfUser']: typeOfUser}});
-    }
-     radioInput = (props) => {
-             return (
-                 <Form.Radio
-                 label={props.label}
-                 value={props.value}
-                 onChange={this.onChangeRadio}
-                 onBlur={(e)=>this.onBlur(e,props.rules || [])}
-                 checked={props.checked}
-                 name={props.name}   
-                 typeOfUser={props.typeOfUser} 
-                 />)
-         }
-    onSelect = (e, {value}) => {
+    onSelect = (e, {value}, name) => {
         const rules = ['required'];
-        if(value === 'PENDING' || value === 'PUBLISHED') {
-            const valid = rules.map((r)=>({[r]: validations(r, value)}));
-            this.setState({ formValue: {...this.state.formValue,['status']: value} });
-            this.setState({ formErrors: {...this.state.formErrors,['status']: valid} });
-
-        }
-        else {
-            const valid = rules.map((r)=>({[r]: validations(r, value)}));
+        const valid = rules.map((r)=>({[r]: validations(r, value)}));
+        if(name === 'sellerType') {
+            console.log("yes")
             this.setState({ formValue: {...this.state.formValue, ['userType']: value.split(" ")[1], ['uid']: value.split(" ")[0] }});
-            this.setState({formErrors: {...this.state.formErrors,['userType']: valid,['uid']: valid}});
+            this.setState({ formErrors: {...this.state.formErrors,['userType']: valid,['uid']: valid}});
+       } else {
+            this.setState({ formValue: {...this.state.formValue,[name]: value}});
+            this.setState({ formErrors: {...this.state.formErrors,[name]: valid} });
         
         }
     }
-     selectElement = (props) => {
-             return (
-                 <Form.Dropdown
-                 label={props.label}
-                 value={props.value}
-                 onChange={this.onSelect}
-                 name={props.name}   
-                 rules={props.rules}
-                 placeholder={props.placeholder}
-                 options={props.options} 
-                 required={props.required}
-                 error={props.error}
-                 {...props}
-                 selection
-                 />)
-         }
+
+    radioInput = (props) => {
+        return (
+            <Form.Radio
+                label={props.label}
+                value={props.value}
+                onChange={(e, value) => this.onSelect(e, value, props.name)}
+                onBlur={(e)=>this.onBlur(e,props.rules || [])}
+                checked={props.checked}
+                name={props.name}
+                typeOfUser={props.typeOfUser}
+            />
+        )
+    }
+
+    selectElement = (props) => {
+        return (
+            <Form.Dropdown
+                label={props.label}
+                value={props.value}
+                onChange={(e, value) => this.onSelect(e, value, props.name)}
+                name={props.name}
+                rules={props.rules}
+                placeholder={props.placeholder}
+                options={props.options}
+                required={props.required}
+                error={props.error}
+                {...props}
+                selection
+            />
+        )
+    }
          
          formFieldElement = (props) => {
             return(

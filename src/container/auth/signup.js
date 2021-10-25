@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid, Header, Form, Segment } from "semantic-ui-react";
+import { Button, Grid, Header, Form } from "semantic-ui-react";
 import { authSignup } from '../../store/action/authAction';
 import { connect } from 'react-redux';
 import FormElements from "../../Hoc/formElement";
@@ -20,12 +20,6 @@ const initialFormErrors = {
   password: [{ required:false}, {password: false}]
 };
 class Signup extends React.Component {
-  constructor(props){
-    super(props);
-
-  }
-
-
   handleRadio = (e, {value}) => {
     this.setState({ typeOfUser: value });
   }
@@ -33,18 +27,6 @@ class Signup extends React.Component {
   handleSubmit = async (e) => {
     const { smartElement, data } = this.props;
     e.preventDefault();
-    // await this.setState({
-    //   email: this.emailInput.current.inputRef.current.value, 
-    //   password: this.passwordInput.current.inputRef.current.value,
-    //   firstName: this.firstNameInput.current.inputRef.current.value,
-    //   lastName: this.lastNameInput.current.inputRef.current.value
-    // })
-    // const checkError = this.props.validation(this.state, 'signup');    
-    // if(checkError.length > 0) {
-    //   await this.setState({
-    //     errorMessages: checkError
-    //   })
-    // } else {
       const val = smartElement.isFormValid1();
       if(!val.includes(false)) {
         this.props.authSignup(data);
@@ -53,7 +35,16 @@ class Signup extends React.Component {
         this.props.history.push("dashboard");
       }
     }
-  // }
+
+  errorHandle = (type, isData) => {
+    const { smartElement } = this.props;
+    if(type === 'firstName' || type === 'lastName') {
+      return smartElement.stateData.isDirtyForm  && isData.length ? isData.some(r=>r["required"]) ? false : `${type} Required` : false
+    }else {
+      return smartElement.stateData.isDirtyForm && isData.length ? isData.some(r=>r["required"]) ? isData.some(r=>r[type])? false :`Invalid ${type}` : `${type} Required` : false
+    }
+
+  }
 
   render() {
     const { smartElement, data, formErrors } = this.props;
@@ -73,19 +64,19 @@ class Signup extends React.Component {
           <div class="ui stacked segment">
             <div class="field">
                 {smartElement.formInput({
-                       ...firstName, error: smartElement.stateData.isDirtyForm && formErrors.firstName && formErrors.firstName.length ? formErrors.firstName.some(r=>r["required"]) ? '' : 'First name Required' : "" })}
+                       ...firstName, error: this.errorHandle('firstName', formErrors.firstName) })}
             </div>
             <div class="field">
                 {smartElement.formInput({
-                       ...lastName, error: smartElement.stateData.isDirtyForm && formErrors.lastName && formErrors.lastName.length ? formErrors.lastName.some(r=>r["required"]) ? '' : 'Last name Required' : "" })}                
+                       ...lastName, error: this.errorHandle('lastName', formErrors.lastName) })}                
             </div>
             <div class="field">
                 {smartElement.formInput({
-                       ...email, error: smartElement.stateData.isDirtyForm && formErrors.email && formErrors.email.length ? formErrors.email.some(r=>r["required"]) ? formErrors.email.some(r=>r["email"])? "" :"Invalid Email" : 'Email Required' : "" })}                
+                       ...email, error: this.errorHandle('email', formErrors.email) })}                
             </div>
             <div class="field">
                 {smartElement.formInput({
-                       ...password, error: smartElement.stateData.isDirtyForm && formErrors.password && formErrors.password.length ? formErrors.password.some(r=>r["required"]) ? formErrors.password.some(r=>r["password"])? "" :"Invalid Password" : 'Password Required' : "" })}                
+                       ...password, error: this.errorHandle('password', formErrors.password) })}                
             </div>
             <div class="field">
             {smartElement.radioInput({

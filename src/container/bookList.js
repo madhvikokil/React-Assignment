@@ -3,6 +3,7 @@ import { Button, Modal } from "semantic-ui-react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import TableElement from './table';
+import { Dimmer, Loader } from "semantic-ui-react";
 import { bookMetaData } from '../constant/tableConstant';
 import { getBookList, deleteBook } from '../store/action/userAndBookAction';
 class BookList extends React.Component {
@@ -52,6 +53,13 @@ class BookList extends React.Component {
     }
 
     render(){
+      if(!this.props.bookList) {
+        return (
+          <Dimmer active>
+              <Loader size='medium'>Loading</Loader>
+          </Dimmer>
+          )
+      }
     return(
         <>
             <h1>Book List</h1>

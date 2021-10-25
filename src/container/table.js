@@ -1,9 +1,6 @@
 import React from 'react';
 import { withRouter } from "react-router";
-import { connect } from 'react-redux';
-import { placeOrder, updateOrderByAdmin, getMyOrders } from '../store/action/orderAction';
-import { getBookList, deleteBook } from '../store/action/userAndBookAction';
-import { Table, Button, Modal } from "semantic-ui-react";
+import { Table } from "semantic-ui-react";
 
 class TableElement extends React.Component {
     constructor(props){

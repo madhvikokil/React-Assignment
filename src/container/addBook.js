@@ -74,7 +74,7 @@ class AddBook extends React.PureComponent {
     }
 
     handleSubmit = () => {
-      const { smartElement, data } = this.props;
+      const { smartElement } = this.props;
       const isEdit = localStorage.getItem('isEdit');
       const val = smartElement.isFormValid1();
       if(isEdit === 'edit') {
@@ -85,10 +85,22 @@ class AddBook extends React.PureComponent {
       }
     }
 
+    isReadOnly = () => {
+      console.log("is here");
+      const isEdit = localStorage.getItem('isEdit');
+      return isEdit === 'view'
+    }
+
+    errorHandle = (type, isData, data) => {
+    const { smartElement } = this.props;
+     return data && smartElement.stateData.isDirtyForm && isData.length ? isData.some(r=>r["required"]) ? false : `${type} is Required` : false
+    }
+
     render(){
         let userData = [];
-        const user = localStorage.getItem('typeOfUser');
+        const isEdit = localStorage.getItem('isEdit');
         const id = localStorage.getItem('uid');
+        const { smartElement, data, formErrors } = this.props;
 
         if(this.props.userList) {
             this.props.userList.map((data) => {
@@ -117,35 +129,30 @@ class AddBook extends React.PureComponent {
             )
         }
 
-        const isEdit = localStorage.getItem('isEdit');
-        // const user = localStorage.getItem('typeOfUser');
-
-        const { smartElement, data, formErrors } = this.props;
-
         return(
         <>
             {this.props.match.params.id ? (isEdit === 'view' ? <h1> Book </h1>: <h1>Edit Book </h1>) : <h1>Add Book</h1>}
             <Form style={{ margin: "0 auto", width: '80%' }}>
               <Form.Group widths='equal'>
                 {smartElement.formFieldElement({...titleOfBook, value: data.title,
-                    readOnly: isEdit === 'view' ? true : false, error: !data.title && smartElement.stateData.isDirtyForm && formErrors.title && formErrors.title.length ? formErrors.title.some(r=>r["required"]) ? '' : 'Title is Required' : "" })}                
+                    readOnly: this.isReadOnly(), error: this.errorHandle('title', formErrors.title, !data.title) })}                
                 {smartElement.formFieldElement({...authorOfBook, value: data.author,
-                    readOnly: isEdit === 'view' ? true : false, error: !data.author && smartElement.stateData.isDirtyForm && formErrors.author && formErrors.author.length ? formErrors.author.some(r=>r["required"]) ? '' : 'Author is Required' : "" })}
+                    readOnly: this.isReadOnly(), error: this.errorHandle('author', formErrors.author, !data.author) })}
               </Form.Group>
               {smartElement.formFieldTextElement({...descriptionOfBook,value: data.description,
-                  readOnly: isEdit === 'view' ? true : false, error: !data.description && smartElement.stateData.isDirtyForm && formErrors.description && formErrors.description.length ? formErrors.description.some(r=>r["required"]) ? '' : 'Description is Required' : "" })}
+                  readOnly: this.isReadOnly(), error: this.errorHandle('description', formErrors.description, !data.description) })}
                            <Form.Group widths='equal'>
                 {smartElement.selectElement({...statusOfBook, value: data.status,
-                    options:dropdown, disabled: isEdit === 'view' ? true : false, error: !data.status && smartElement.stateData.isDirtyForm && formErrors.status && formErrors.status.length ? formErrors.status.some(r=>r["required"]) ? '' : 'Status is Required' : "" })}
+                    options:dropdown, disabled: this.isReadOnly(), error: this.errorHandle('status', formErrors.status, !data.status) })}
                 {smartElement.selectElement({...seller,value: `${data.uid} ${data.userType}`,
-                        options:userData, disabled: isEdit === 'view' ? true : false, error: smartElement.stateData.isDirtyForm && formErrors.uid && formErrors.uid.length ? formErrors.uid.some(r=>r["required"]) ? '' : 'Seller Type is Required' : "" && formErrors.uid && formErrors.userType.length ? formErrors.userType.some(r=>r["required"]) ? '' : 'Seller Type is Required' : ""})}
+                        options:userData, disabled: this.isReadOnly(), error: smartElement.stateData.isDirtyForm &&  formErrors.uid.length ? formErrors.uid.some(r=>r["required"]) ? false : 'Seller Type is Required' : false && formErrors.userType.length ? formErrors.userType.some(r=>r["required"]) ? false : 'Seller Type is Required' : false })}
               </Form.Group>
               <Form.Group widths='equal'>
                 {smartElement.formFieldElement({...bookPrice, value: data.price,
-                      readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew, error: !data.price && smartElement.stateData.isDirtyForm && formErrors.price && formErrors.price.length ? formErrors.price.some(r=>r["required"]) ? '' : 'Price is Required' : ""})} 
+                      readOnly: this.isReadOnly(), onKeyDown: this.checkNumericNew, error: this.errorHandle('price', formErrors.price, !data.price) })} 
                 {smartElement.formFieldElement({...discountRate, value: data.discount, 
-                      readOnly: isEdit === 'view' ? true : false, onKeyDown: this.checkNumericNew,
-                      error: !data.discount && smartElement.stateData.isDirtyForm && formErrors.discount && formErrors.discount.length ? formErrors.discount.some(r=>r["required"]) ? '' : 'Discount is Required' : "" })} 
+                      readOnly: this.isReadOnly(), onKeyDown: this.checkNumericNew,
+                      error: this.errorHandle('discount', formErrors.discount, !data.discount) })} 
               </Form.Group>
               {this.state.isOpen && 
           <Modal
