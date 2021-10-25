@@ -1,31 +1,76 @@
-import logo from './logo.svg';
 import './App.css';
 import './assets/semantic/semantic.min.css'
-import { Header, Button, Divider } from 'semantic-ui-react'
+import React from 'react';
+import { Suspense }from 'react';
+import ProtectedRoute from './routes/protectedRoutes';
+import { Route as Router ,Switch } from 'react-router-dom';
+import HeaderElement from './component/navMenu';
+import { connect } from 'react-redux';
+import { withRouter } from "react-router";
+import { routes } from './routes/routes';
 
+function App(props) {
+  let typeOfUser;
+  let { auth } = props;
 
-function App() {
+  const NotFound = (props) => {
+    return <h2>404 Not Found</h2>;
+  };
+
+  if(auth.uid) {
+    let userType = localStorage.getItem('typeOfUser');
+    if(userType === 'admin') {
+      typeOfUser = 'admin';
+    } else if (userType === 'seller') {
+      typeOfUser = 'seller';
+    } else {
+      typeOfUser = 'customer';
+    }
+  }
+  const getComponent = component => React.lazy(() => import(`./container/${component}`));
+
+  const routeComp = routes.map(
+    ({ path, name, componentPath, isExact, authRoute, roles }) => {
+      if (authRoute) {
+        return (
+          <ProtectedRoute
+            exact={isExact}
+            path={path}
+            authRoute={authRoute}
+            isAuthenticated={auth.uid}
+            component={getComponent(componentPath)}
+            key={name}
+            roles={roles}
+          />
+        );
+      } else {
+        return (
+          <Router
+            exact={isExact}
+            path={path}
+            component={getComponent(componentPath)}
+            key={name}
+          />
+        );
+      }
+    }
+  );
+
+  let routesList = <Switch>{routeComp}<Router component={NotFound}/></Switch>
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Header as='h1'>Welcome To React App With Semtic UI</Header>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <Divider hidden />
-        <div>
-          <Button content='Primary' primary />
-          <Button content='Secondary' secondary />
-        </div>
-      </header>
+      <Suspense fallback={<p>Loading...</p>}>
+      <HeaderElement typeOfUser={typeOfUser} auth={auth}/>
+      {routesList}
+      </Suspense>
     </div>
-  );
-}
+    );
+  }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    // isAuthenticated: state.auth.isAuthenticated,
+    auth: state.firebase.auth
+  }
+}
+export default withRouter(connect(mapStateToProps)(App));
