@@ -6,30 +6,57 @@ import { Button, Modal } from "semantic-ui-react";
 import { publishedBooksMetaData } from '../constant/tableConstant';
 import { placeOrder } from '../store/action/orderAction';
 import { Dimmer, Loader } from "semantic-ui-react";
+import {  Form, Input } from 'semantic-ui-react';
 import { getPublishedBookList } from '../store/action/userAndBookAction';
 
 const HomePage = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [data, setData] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState(0);
 
+  
   useEffect(() => {
     props.getPublishedBookList();
   }, [])
 
-  const placeMyOrder = (book) => {
-    if(props.auth.uid) {
-      props.placeOrder(book);
-    } else {
-      props.history.push('signin')
-    }
+  const placeMyOrder = (book, quantity, price) => {
+    props.placeOrder(book, quantity, price);
     if(props.orderPlaced === 'Success') {
-      setIsOpen(true);
+      setIsOpen(false);
     }
+  }
+
+  const openModal = (data) => {
+    console.log("data: ", data);
+     if(props.auth.uid) {
+        setData(data);
+        setIsOpen(true);
+    } else {
+      props.history.push('signin')  
+    }
+
   }
 
   const bookList = (data) => {
     return (
-      <Button onClick={() => placeMyOrder(data)}>Place Order</Button>
+      <Button onClick={() => openModal(data)}>Place Order</Button>
     )
+  }
+
+  const onChange = (e) => {
+    if (e.target.value >= 1) {
+      setQuantity(e.target.value)
+      let discountApplied = (data.price * e.target.value) - (data.price * e.target.value * data.discount / 100)
+      setPrice(discountApplied);
+  }
+  }
+
+  const checkTotalPrice = () => {
+    // bookDetails.price - (bookDetails.price * (bookDetails.discount/100));
+    let price = data.price  - (data.price * (data.discount/100));
+    setPrice(price);
+    return price
   }
 
   if(!props.publishedBookList){
@@ -55,9 +82,37 @@ const HomePage = (props) => {
           size={'tiny'}
           open={isOpen}
         >
-          <Modal.Header>Place Order Successfully</Modal.Header>
+          <Modal.Header>Place Order</Modal.Header>
+          <Modal.Content>
+            <p><b>Title:</b> {data && data.title}</p>
+            <p><b>Author:</b> {data && data.author}</p>
+            <p><b>Price:</b> {data && data.price} <b>Discount:</b> {data && data.discount}%</p>
+            <Form.Field
+              id='quantity'
+              control={Input}
+              label='Quantity'
+              name='quantity'
+              type='number'
+              onChange={onChange}
+              value={quantity}
+              // onKeyDown={checkNumericNew}
+              required={props.required}
+            />
+             <Form.Input
+                fluid
+                label='Total Price'
+                placeholder='Total price'
+                type='number'
+                disabled='true'
+                name="totalPrice"
+                value={quantity === 1 ? data && data.actualPrice : price}
+              />
+            </Modal.Content>
               <Modal.Actions>
                 <Button negative onClick={() => setIsOpen(false)}>
+                  Cancel
+                </Button>
+                <Button positive onClick={() => placeMyOrder(data, quantity, price)}>
                   Okay
                 </Button>
               </Modal.Actions>
@@ -77,7 +132,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps =(dispatch) => {
   return {
     getPublishedBookList: ()  => dispatch(getPublishedBookList()),
-    placeOrder: (book)  => dispatch(placeOrder(book)),
+    placeOrder: (data, quantity, price)  => dispatch(placeOrder(data, quantity, price)),
   }
 }
 

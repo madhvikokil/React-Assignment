@@ -1,21 +1,23 @@
 import { v4 as uuidv4 } from 'uuid';
-export const placeOrder = (book) => {
+export const placeOrder = (book, quantity, actualPrice) => {
     return(dispatch, getstate, { getFirestore }) => {
       const firestore = getFirestore();
       const uid = localStorage.getItem('uid');
       const user = localStorage.getItem('typeOfUser');
+      const finalPrice = quantity === 1 ? book.actualPrice : actualPrice;
       let id = uuidv4();
       firestore.collection('orders').doc(id).set({
         orderId: id,
         bookId: book.id,
         discount: book.discount,
         price: book.price,
-        actualPrice: book.actualPrice,
+        actualPrice: finalPrice,
         orderDate: new Date(),
         status: "PENDING",
         userId: uid,
         titleOfBook: book.title,
-        user: user
+        user: user,
+        quantity: quantity
 
       }).then((res) => {
         dispatch({ type: 'ORDER_PLACED' })

@@ -67,7 +67,6 @@ class AddBook extends React.PureComponent {
       let isAdd = localStorage.getItem('isEdit');
       if (isAdd !== 'add' && nextProps.bookDetail) {
         if(data.title === "") {
-          console.log("yesss");
           smartElement.bindValues(nextProps.bookDetail);
         }
       }
@@ -86,7 +85,6 @@ class AddBook extends React.PureComponent {
     }
 
     isReadOnly = () => {
-      console.log("is here");
       const isEdit = localStorage.getItem('isEdit');
       return isEdit === 'view'
     }

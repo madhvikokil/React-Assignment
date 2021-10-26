@@ -53,7 +53,6 @@ export default function HocComponent(WrappedComponent, initialFormObj = {}, init
         const rules = ['required'];
         const valid = rules.map((r)=>({[r]: validations(r, value)}));
         if(name === 'sellerType') {
-            console.log("yes")
             this.setState({ formValue: {...this.state.formValue, ['userType']: value.split(" ")[1], ['uid']: value.split(" ")[0] }});
             this.setState({ formErrors: {...this.state.formErrors,['userType']: valid,['uid']: valid}});
        } else {

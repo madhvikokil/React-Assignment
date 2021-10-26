@@ -29,7 +29,8 @@ export const myOrderMetaData = [
     { title: "Book Title", key: "titleOfBook" },
     { title: "Price(Rs.)", key: "price" },
     { title: "Discount Applied", key: "discount" },
-    { title: "Actual Price", key: "actualPrice" },
+    { title: "Quantity", key: "quantity" },
+    { title: "Final Price", key: "actualPrice" },
     { title: "User Type", key: "user", transform: (val) => val.toUpperCase()},
     { title: "Status", key: "status", transform: (val) => val.toUpperCase()},
 ];
