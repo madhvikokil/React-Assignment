@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import equal from 'fast-deep-equal'
 import { addBook, fetchBookDetails, updateBook, getUsersList } from '../store/action/userAndBookAction';
 import FormElements from "../Hoc/formElement";
 import { Dimmer, Loader, Modal, Button } from "semantic-ui-react";
@@ -61,7 +62,7 @@ class AddBook extends React.PureComponent {
         this.props.fetchBookDetails(this.props.match.params.id);
     }
     }
-    
+
     componentWillReceiveProps(nextProps) {
       const { data, smartElement } =this.props;
       let isAdd = localStorage.getItem('isEdit');
@@ -71,6 +72,16 @@ class AddBook extends React.PureComponent {
         }
       }
     }
+
+    componentDidUpdate(prevProps) {
+      let isAdd = localStorage.getItem('isEdit');
+      if(!equal(this.props.bookDetail, prevProps.bookDetail) && isAdd !== 'add')
+      {
+        const { smartElement } =this.props;
+        this.props.fetchBookDetails(this.props.match.params.id);
+        smartElement.bindValues(this.props.bookDetail);
+      }
+    } 
 
     handleSubmit = () => {
       const { smartElement } = this.props;
@@ -126,6 +137,7 @@ class AddBook extends React.PureComponent {
             </Dimmer>
             )
         }
+        console.log("books: ", this.props.bookDetail);
 
         return(
         <>
@@ -143,7 +155,7 @@ class AddBook extends React.PureComponent {
                 {smartElement.selectElement({...statusOfBook, value: data.status,
                     options:dropdown, disabled: this.isReadOnly(), error: this.errorHandle('status', formErrors.status, !data.status) })}
                 {smartElement.selectElement({...seller,value: `${data.uid} ${data.userType}`,
-                        options:userData, disabled: this.isReadOnly(), error: smartElement.stateData.isDirtyForm &&  formErrors.uid.length ? formErrors.uid.some(r=>r["required"]) ? false : 'Seller Type is Required' : false && formErrors.userType.length ? formErrors.userType.some(r=>r["required"]) ? false : 'Seller Type is Required' : false })}
+      options:userData, disabled: this.isReadOnly(), error: !data.uid && !data.userType && smartElement.stateData.isDirtyForm &&  formErrors.uid.length ? formErrors.uid.some(r=>r["required"]) ? false : 'Seller Type is Required' : false && formErrors.userType.length ? formErrors.userType.some(r=>r["required"]) ? false : 'Seller Type is Required' : false })}
               </Form.Group>
               <Form.Group widths='equal'>
                 {smartElement.formFieldElement({...bookPrice, value: data.price,
